@@ -1,0 +1,133 @@
+/* 纯黑白色调 Dark Mode */
+[data-theme="dark"] {
+  --card-bg: #1a1a1a;
+  --sidebar-bg: #1a1a1a;
+  --text-color: #e0e0e0;
+  --font-color: #d0d0d0;
+  --hr-border: #404040;
+  --hr-before: #606060;
+  --preloader-bg: #1a1a1a;
+  --selection-bg: #4a4a4a;
+  --border-color: #333;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+
+  background-color: #0a0a0a !important;
+  color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] body {
+  background-color: #0a0a0a !important;
+}
+
+[data-theme="dark"] #sidebar,
+[data-theme="dark"] .aside-content,
+[data-theme="dark"] .card-widget {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+}
+
+[data-theme="dark"] #article-container {
+  color: #d0d0d0 !important;
+}
+
+[data-theme="dark"] #page-header {
+  position: relative;
+}
+
+[data-theme="dark"] #page-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+[data-theme="dark"] a {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] a:hover {
+  color: #fff;
+}
+
+/* ========== Footer Dark Mode 终极修复 ========== */
+
+/* 1. 基础覆盖 - 使用最高优先级 */
+html[data-theme="dark"] body #footer,
+[data-theme="dark"] footer#footer,
+[data-theme="dark"] #footer {
+  background-color: #1a1a1a !important;
+  background: #1a1a1a !important;
+  background-image: none !important;
+  background: linear-gradient(to bottom, #1a1a1a, #1a1a1a) !important;
+  color: #d0d0d0 !important;
+  position: relative;
+}
+
+/* 2. 移除伪元素遮罩 - 这是关键！*/
+[data-theme="dark"] #footer::before,
+[data-theme="dark"] #footer::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  background-image: none !important;
+  opacity: 0 !important;
+}
+
+/* 3. 子元素容器 */
+[data-theme="dark"] #footer .footer-other,
+[data-theme="dark"] #footer .footer-copyright,
+[data-theme="dark"] #footer .footer-flex {
+  background: transparent !important;
+  background-image: none !important;
+  color: #b0b0b0 !important;
+}
+
+/* 4. 所有子元素文字颜色 */
+[data-theme="dark"] #footer * {
+  color: #b0b0b0 !important;
+  border-color: #333 !important;
+}
+
+/* 5. 链接样式 */
+[data-theme="dark"] #footer a,
+[data-theme="dark"] #footer .framework-info a,
+[data-theme="dark"] #footer .copyright a {
+  color: #909090 !important;
+  text-decoration: none !important;
+}
+
+[data-theme="dark"] #footer a:hover,
+[data-theme="dark"] #footer .framework-info a:hover {
+  color: #ffffff !important;
+}
+
+/* 6. 版权信息特殊处理 */
+[data-theme="dark"] #footer .copyright,
+[data-theme="dark"] #footer .framework-info,
+[data-theme="dark"] #footer span {
+  color: #909090 !important;
+}
+
+/* 7. 分隔符 */
+[data-theme="dark"] #footer .footer-separator {
+  color: #606060 !important;
+}
+
+/* 无图文章头图区域 - 纯色背景 */
+[data-theme="dark"] .post-bg:not([style*="background-image"]) {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%) !important;
+}
+
+/* 取消头像悬停旋转效果 - 始终禁用 */
+.avatar-img img,
+.site-data img,
+.card-avatar-img {
+  transition: none !important;
+}
+
+.avatar-img img:hover,
+.site-data img:hover,
+.card-avatar-img:hover {
+  transform: none !important;
+}
