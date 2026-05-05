@@ -1,4 +1,13 @@
-/* 纯黑白色调 Dark Mode */
+/* ========== Light Mode 基础修复 ========== */
+
+/* 确保 light 模式下背景为纯白色 */
+html[data-theme="light"],
+html[data-theme="light"] body {
+  background-color: #ffffff !important;
+}
+
+/* ========== Dark Mode 纯黑白色调 ========== */
+
 [data-theme="dark"] {
   --card-bg: #1a1a1a;
   --sidebar-bg: #1a1a1a;
@@ -11,12 +20,12 @@
   --border-color: #333;
   --shadow-color: rgba(0, 0, 0, 0.5);
 
-  background-color: #0a0a0a !important;
-  color: #e0e0e0 !important;
+  background-color: #0a0a0a;
+  color: #e0e0e0;
 }
 
 [data-theme="dark"] body {
-  background-color: #0a0a0a !important;
+  background-color: #0a0a0a;
 }
 
 [data-theme="dark"] #sidebar,
@@ -30,8 +39,58 @@
   color: #d0d0d0 !important;
 }
 
-[data-theme="dark"] #page-header {
+/* ========== Header Dark Mode 修复 ========== */
+
+/* 1. 有头图的首页 (full_page) - 保持头图完全可见，只加深遮罩让文字更清晰 */
+[data-theme="dark"] #page-header.full_page {
+  /* 不覆盖 background，让 header.jpg 正常显示 */
+}
+
+[data-theme="dark"] #page-header.full_page::before {
+  background-color: rgba(0, 0, 0, 0.35) !important;
+}
+
+/* 2. 无头图的页面 (not-top-img) - 给 header 一个深色背景 */
+[data-theme="dark"] #page-header.not-top-img {
   background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%) !important;
+}
+
+/* 3. 导航栏在 dark 模式下的样式 */
+[data-theme="dark"] #page-header.not-top-img #nav,
+[data-theme="dark"] #page-header.nav-fixed #nav {
+  background: rgba(18, 18, 18, 0.85) !important;
+  box-shadow: 0 5px 6px -5px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 4. 导航栏文字颜色 - 确保在 dark 模式下可见 */
+[data-theme="dark"] #page-header #nav a,
+[data-theme="dark"] #page-header #nav span.site-page,
+[data-theme="dark"] #page-header #nav .site-name,
+[data-theme="dark"] #page-header #nav #blog-info {
+  color: #e0e0e0 !important;
+  text-shadow: none !important;
+}
+
+[data-theme="dark"] #page-header #nav a:hover,
+[data-theme="dark"] #page-header #nav span.site-page:hover {
+  color: #ffffff !important;
+}
+
+/* 5. 首页头图上的标题文字 */
+[data-theme="dark"] #page-header #site-title {
+  color: #ffffff !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] #page-header #site-subtitle,
+[data-theme="dark"] #page-header #scroll-down .scroll-down-effects {
+  color: #d0d0d0 !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 6. 社交图标 */
+[data-theme="dark"] #page-header #site_social_icons .social-icon {
+  color: #d0d0d0 !important;
 }
 
 [data-theme="dark"] a {
