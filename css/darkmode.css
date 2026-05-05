@@ -31,15 +31,7 @@
 }
 
 [data-theme="dark"] #page-header {
-  position: relative;
-}
-
-[data-theme="dark"] #page-header::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 1;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%) !important;
 }
 
 [data-theme="dark"] a {
@@ -117,17 +109,4 @@ html[data-theme="dark"] body #footer,
 /* 无图文章头图区域 - 纯色背景 */
 [data-theme="dark"] .post-bg:not([style*="background-image"]) {
   background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%) !important;
-}
-
-/* 取消头像悬停旋转效果 - 始终禁用 */
-.avatar-img img,
-.site-data img,
-.card-avatar-img {
-  transition: none !important;
-}
-
-.avatar-img img:hover,
-.site-data img:hover,
-.card-avatar-img:hover {
-  transform: none !important;
 }
