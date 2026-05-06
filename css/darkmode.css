@@ -169,3 +169,181 @@ html[data-theme="dark"] body #footer,
 [data-theme="dark"] .post-bg:not([style*="background-image"]) {
   background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%) !important;
 }
+
+/* ========== 代码块下载按钮样式 ========== */
+
+/* 下载按钮容器 */
+.code-download-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #2d2d2d;
+  border-bottom: 1px solid #444;
+  border-radius: 8px 8px 0 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+}
+
+/* 文件名 */
+.code-download-bar .code-filename {
+  color: #e0e0e0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.code-download-bar .code-filename::before {
+  content: "📄";
+  font-size: 14px;
+}
+
+/* 下载按钮 */
+.code-download-bar .code-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #4a9eff;
+  color: #fff !important;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.code-download-bar .code-download-btn:hover {
+  background: #357abd;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+}
+
+.code-download-bar .code-download-btn::before {
+  content: "⬇";
+  font-size: 12px;
+}
+
+/* 让代码块和下载按钮融为一体 */
+.code-download-wrap {
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.code-download-wrap pre,
+.code-download-wrap .highlight {
+  margin: 0 !important;
+  border-radius: 0 0 8px 8px !important;
+}
+
+/* Light mode 适配 */
+html[data-theme="light"] .code-download-bar {
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+html[data-theme="light"] .code-download-bar .code-filename {
+  color: #333;
+}
+
+html[data-theme="light"] .code-download-bar .code-download-btn {
+  background: #0066cc;
+}
+
+html[data-theme="light"] .code-download-bar .code-download-btn:hover {
+  background: #0052a3;
+}
+
+/* ========== 文件下载卡片样式（通用） ========== */
+
+.file-download-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  margin: 1.5rem 0;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+  border: 1px solid #444;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.file-download-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: #4a9eff;
+}
+
+.file-download-card .file-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.file-download-card .file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-download-card .file-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e0e0e0;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-download-card .file-meta {
+  font-size: 12px;
+  color: #888;
+}
+
+.file-download-card .file-download-btn {
+  padding: 8px 18px;
+  background: #4a9eff;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.file-download-card:hover .file-download-btn {
+  background: #357abd;
+}
+
+/* Light mode */
+html[data-theme="light"] .file-download-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-color: #dee2e6;
+}
+
+html[data-theme="light"] .file-download-card:hover {
+  border-color: #0066cc;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="light"] .file-download-card .file-name {
+  color: #333;
+}
+
+html[data-theme="light"] .file-download-card .file-meta {
+  color: #666;
+}
+
+html[data-theme="light"] .file-download-card .file-download-btn {
+  background: #0066cc;
+}
+
+html[data-theme="light"] .file-download-card:hover .file-download-btn {
+  background: #0052a3;
+}

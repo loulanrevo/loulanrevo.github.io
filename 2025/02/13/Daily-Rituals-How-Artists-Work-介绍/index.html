@@ -118,7 +118,7 @@
   algolia: undefined,
   localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
   translate: undefined,
-  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500,"highlightFullpage":false,"highlightMacStyle":true},
   copy: {
     success: '复制成功',
     error: '复制失败',
@@ -156,7 +156,149 @@
   isHighlightShrink: false,
   isToc: true,
   pageType: 'post'
-}</script><link rel="stylesheet" href="/css/darkmode.css"><style>.card-info-social-icons i:hover { transform: none !important; }</style><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/header.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">loulanre</span></a><a class="nav-page-title" href="/"><span class="site-name">Daily Rituals How Artists Work 介绍</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Daily Rituals How Artists Work 介绍</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2025-02-12T16:00:00.000Z" title="发表于 2025-02-13 00:00:00">2025-02-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Daily-Rituals/">Daily Rituals</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p><img src="https://picx.zhimg.com/v2-805fd09b1d543ada74014be005abae33_1440w.jpg"></p>
+}</script><link rel="stylesheet" href="/css/darkmode.css"><style>.card-info-social-icons i:hover { transform: none !important; }</style><!-- hexo injector head_end start -->
+  <style>
+    @keyframes borderGlow {
+      0% {
+        border-color: #3f7cff;
+        box-shadow: 0 0 5px #3f7cff;
+      }
+      33% {
+        border-color: #ff3f7c;
+        box-shadow: 0 0 5px #ff3f7c;
+      }
+      66% {
+        border-color: #7cff3f;
+        box-shadow: 0 0 5px #7cff3f;
+      }
+      100% {
+        border-color: #3f7cff;
+        box-shadow: 0 0 5px #3f7cff;
+      }
+    }
+
+    @keyframes buttonPulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .pan-link-card {
+      margin: 1rem 0;
+      padding: 0.8rem;
+      background: #1a1b1e;
+      border-radius: 8px;
+      transition: all 0.3s;
+      border: 1px solid #2a2b2e;
+      color: #e4e4e4;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pan-link-card:hover {
+      border-color: transparent;
+      animation: borderGlow 4s linear infinite;
+      transform: translateY(-2px);
+    }
+
+    .pan-link-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pan-icon {
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s;
+    }
+
+    .pan-link-card:hover .pan-icon {
+      transform: rotate(360deg);
+    }
+
+    .pan-icon img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .pan-info {
+      flex-grow: 1;
+      transition: transform 0.3s;
+    }
+
+    .pan-link-card:hover .pan-info {
+      transform: translateX(5px);
+    }
+
+    .pan-name {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #e4e4e4;
+    }
+
+    .pan-code {
+      font-size: 0.9em;
+      color: #888;
+      margin-top: 4px;
+      transition: color 0.3s;
+    }
+
+    .pan-link-card:hover .pan-code {
+      color: #aaa;
+    }
+
+    .pan-button {
+      background: #3f7cff;
+      color: white;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pan-button:hover {
+      background: #3365d6;
+      animation: buttonPulse 1s ease-in-out infinite;
+    }
+
+    .pan-button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transform: rotate(45deg);
+      transition: 0.3s;
+      opacity: 0;
+    }
+
+    .pan-button:hover::after {
+      opacity: 1;
+      transform: rotate(45deg) translate(50%, 50%);
+    }
+  </style>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/header.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">loulanre</span></a><a class="nav-page-title" href="/"><span class="site-name">Daily Rituals How Artists Work 介绍</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Daily Rituals How Artists Work 介绍</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2025-02-12T16:00:00.000Z" title="发表于 2025-02-13 00:00:00">2025-02-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Daily-Rituals/">Daily Rituals</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p><img src="https://picx.zhimg.com/v2-805fd09b1d543ada74014be005abae33_1440w.jpg"></p>
 <p>Daily Rituals How Artists Work (Mason Currey)</p>
 <h2 id="契机"><a href="#契机" class="headerlink" title="契机"></a><strong>契机</strong></h2><p>我是在 <a target="_blank" rel="noopener" href="https://www.zhihu.com/people/JarrettYe">Jarrett Ye​</a> 翻译的文章 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/677677092">在研究中培养深度和沉静 - 知乎</a> 中继续做扩展阅读中读到的这本书</p>
 <p><img src="https://pic2.zhimg.com/v2-fdd9926f3d69d6246a1452370465f7d3_1440w.jpg"></p>

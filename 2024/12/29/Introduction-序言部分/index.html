@@ -118,7 +118,7 @@
   algolia: undefined,
   localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
   translate: undefined,
-  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500,"highlightFullpage":false,"highlightMacStyle":true},
   copy: {
     success: '复制成功',
     error: '复制失败',
@@ -156,7 +156,149 @@
   isHighlightShrink: false,
   isToc: true,
   pageType: 'post'
-}</script><link rel="stylesheet" href="/css/darkmode.css"><style>.card-info-social-icons i:hover { transform: none !important; }</style><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">6</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/header.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">loulanre</span></a><a class="nav-page-title" href="/"><span class="site-name">Introduction 序言部分</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Introduction 序言部分</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2024-12-28T16:00:00.000Z" title="发表于 2024-12-29 00:00:00">2024-12-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Daily-Rituals/">Daily Rituals</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">4.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>18分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="题记："><a href="#题记：" class="headerlink" title="题记："></a>题记：</h2><blockquote>
+}</script><link rel="stylesheet" href="/css/darkmode.css"><style>.card-info-social-icons i:hover { transform: none !important; }</style><!-- hexo injector head_end start -->
+  <style>
+    @keyframes borderGlow {
+      0% {
+        border-color: #3f7cff;
+        box-shadow: 0 0 5px #3f7cff;
+      }
+      33% {
+        border-color: #ff3f7c;
+        box-shadow: 0 0 5px #ff3f7c;
+      }
+      66% {
+        border-color: #7cff3f;
+        box-shadow: 0 0 5px #7cff3f;
+      }
+      100% {
+        border-color: #3f7cff;
+        box-shadow: 0 0 5px #3f7cff;
+      }
+    }
+
+    @keyframes buttonPulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .pan-link-card {
+      margin: 1rem 0;
+      padding: 0.8rem;
+      background: #1a1b1e;
+      border-radius: 8px;
+      transition: all 0.3s;
+      border: 1px solid #2a2b2e;
+      color: #e4e4e4;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pan-link-card:hover {
+      border-color: transparent;
+      animation: borderGlow 4s linear infinite;
+      transform: translateY(-2px);
+    }
+
+    .pan-link-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pan-icon {
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s;
+    }
+
+    .pan-link-card:hover .pan-icon {
+      transform: rotate(360deg);
+    }
+
+    .pan-icon img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .pan-info {
+      flex-grow: 1;
+      transition: transform 0.3s;
+    }
+
+    .pan-link-card:hover .pan-info {
+      transform: translateX(5px);
+    }
+
+    .pan-name {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #e4e4e4;
+    }
+
+    .pan-code {
+      font-size: 0.9em;
+      color: #888;
+      margin-top: 4px;
+      transition: color 0.3s;
+    }
+
+    .pan-link-card:hover .pan-code {
+      color: #aaa;
+    }
+
+    .pan-button {
+      background: #3f7cff;
+      color: white;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pan-button:hover {
+      background: #3365d6;
+      animation: buttonPulse 1s ease-in-out infinite;
+    }
+
+    .pan-button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transform: rotate(45deg);
+      transition: 0.3s;
+      opacity: 0;
+    }
+
+    .pan-button:hover::after {
+      opacity: 1;
+      transform: rotate(45deg) translate(50%, 50%);
+    }
+  </style>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/header.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">loulanre</span></a><a class="nav-page-title" href="/"><span class="site-name">Introduction 序言部分</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Introduction 序言部分</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2024-12-28T16:00:00.000Z" title="发表于 2024-12-29 00:00:00">2024-12-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/Daily-Rituals/">Daily Rituals</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">4.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>18分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="题记："><a href="#题记：" class="headerlink" title="题记："></a>题记：</h2><blockquote>
 <p><em>Who can unravel the essence, the stamp of the artistic temperament! Who can grasp the deep, instinctual fusion of discipline and dissipation on which it rests! —THOMAS MANN, Death in Venice</em><br><em>谁能揭示艺术家气质的本质与印记？谁能理解那深邃且本能的结合——在纪律与放纵之间取得的平衡！”——<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=252081117&content_type=Article&match_order=1&q=%E6%89%98%E9%A9%AC%E6%96%AF%C2%B7%E6%9B%BC&zhida_source=entity">托马斯·曼</a>，《威尼斯之死》</em></p>
 </blockquote>
 <h2 id="中英对照翻译原文："><a href="#中英对照翻译原文：" class="headerlink" title="中英对照翻译原文："></a><strong>中英对照翻译原文：</strong></h2><p>Nearly every weekday morning for a year and a half, I got up at 5:30, brushed my teeth, made a cup of coffee, and sat down to write about how some of the greatest minds of the past four hundred years approached this exact same task—that is, how they made the time each day to do their best work, how they organized their schedules in order to be creative and productive. By writing about the admittedly mundane details of my subjects’ daily lives—when they slept and ate and worked and worried—I hoped to provide a novel angle on their personalities and careers, to sketch entertaining, small-bore portraits of the artist as a creature of habit.</p>

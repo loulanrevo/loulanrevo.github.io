@@ -1,0 +1,1032 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>在资源紧张的云服务器上用 OpenCode 并行开发 | loulanre</title><meta name="author" content="楼兰RE"><meta name="copyright" content="楼兰RE"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="在资源紧张的云服务器上用 OpenCode + tmux 并行开发 本方案面向需要在低配置云服务器（如 2C4G 或共享实例）上进行 AI 辅助开发的用户。通过 JupyterHub Terminal + tmux + OpenCode 的组合，你可以在单台资源紧张的服务器上并行推进多个任务，同时保证任务不会因网络波动或浏览器关闭而中断。   为什么需要这套方案现实痛点：资源紧张下的开发困境在实际">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在资源紧张的云服务器上用 OpenCode 并行开发">
+<meta property="og:url" content="http://example.com/2026/05/06/%E5%9C%A8%E8%B5%84%E6%BA%90%E7%B4%A7%E5%BC%A0%E7%9A%84%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%94%A8-OpenCode-%E5%B9%B6%E8%A1%8C%E5%BC%80%E5%8F%91/index.html">
+<meta property="og:site_name" content="loulanre">
+<meta property="og:description" content="在资源紧张的云服务器上用 OpenCode + tmux 并行开发 本方案面向需要在低配置云服务器（如 2C4G 或共享实例）上进行 AI 辅助开发的用户。通过 JupyterHub Terminal + tmux + OpenCode 的组合，你可以在单台资源紧张的服务器上并行推进多个任务，同时保证任务不会因网络波动或浏览器关闭而中断。   为什么需要这套方案现实痛点：资源紧张下的开发困境在实际">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/header.jpg">
+<meta property="article:published_time" content="2026-05-06T07:30:00.000Z">
+<meta property="article:modified_time" content="2026-05-06T15:15:36.470Z">
+<meta property="article:author" content="楼兰RE">
+<meta property="article:tag" content="工具">
+<meta property="article:tag" content="教程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/header.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "在资源紧张的云服务器上用 OpenCode 并行开发",
+  "url": "http://example.com/2026/05/06/%E5%9C%A8%E8%B5%84%E6%BA%90%E7%B4%A7%E5%BC%A0%E7%9A%84%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%94%A8-OpenCode-%E5%B9%B6%E8%A1%8C%E5%BC%80%E5%8F%91/",
+  "image": "http://example.com/img/header.jpg",
+  "datePublished": "2026-05-06T07:30:00.000Z",
+  "dateModified": "2026-05-06T15:15:36.470Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "楼兰RE",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar.jpg"><link rel="canonical" href="http://example.com/2026/05/06/%E5%9C%A8%E8%B5%84%E6%BA%90%E7%B4%A7%E5%BC%A0%E7%9A%84%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%94%A8-OpenCode-%E5%B9%B6%E8%A1%8C%E5%BC%80%E5%8F%91/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: false,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '在资源紧张的云服务器上用 OpenCode 并行开发',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/darkmode.css"><style>.card-info-social-icons i:hover { transform: none !important; }</style><!-- hexo injector head_end start -->
+  <style>
+    @keyframes borderGlow {
+      0% {
+        border-color: #3f7cff;
+        box-shadow: 0 0 5px #3f7cff;
+      }
+      33% {
+        border-color: #ff3f7c;
+        box-shadow: 0 0 5px #ff3f7c;
+      }
+      66% {
+        border-color: #7cff3f;
+        box-shadow: 0 0 5px #7cff3f;
+      }
+      100% {
+        border-color: #3f7cff;
+        box-shadow: 0 0 5px #3f7cff;
+      }
+    }
+
+    @keyframes buttonPulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .pan-link-card {
+      margin: 1rem 0;
+      padding: 0.8rem;
+      background: #1a1b1e;
+      border-radius: 8px;
+      transition: all 0.3s;
+      border: 1px solid #2a2b2e;
+      color: #e4e4e4;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pan-link-card:hover {
+      border-color: transparent;
+      animation: borderGlow 4s linear infinite;
+      transform: translateY(-2px);
+    }
+
+    .pan-link-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pan-icon {
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s;
+    }
+
+    .pan-link-card:hover .pan-icon {
+      transform: rotate(360deg);
+    }
+
+    .pan-icon img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .pan-info {
+      flex-grow: 1;
+      transition: transform 0.3s;
+    }
+
+    .pan-link-card:hover .pan-info {
+      transform: translateX(5px);
+    }
+
+    .pan-name {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #e4e4e4;
+    }
+
+    .pan-code {
+      font-size: 0.9em;
+      color: #888;
+      margin-top: 4px;
+      transition: color 0.3s;
+    }
+
+    .pan-link-card:hover .pan-code {
+      color: #aaa;
+    }
+
+    .pan-button {
+      background: #3f7cff;
+      color: white;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pan-button:hover {
+      background: #3365d6;
+      animation: buttonPulse 1s ease-in-out infinite;
+    }
+
+    .pan-button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transform: rotate(45deg);
+      transition: 0.3s;
+      opacity: 0;
+    }
+
+    .pan-button:hover::after {
+      opacity: 1;
+      transform: rotate(45deg) translate(50%, 50%);
+    }
+  </style>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/header.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">loulanre</span></a><a class="nav-page-title" href="/"><span class="site-name">在资源紧张的云服务器上用 OpenCode 并行开发</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">在资源紧张的云服务器上用 OpenCode 并行开发</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2026-05-06T07:30:00.000Z" title="发表于 2026-05-06 15:30:00">2026-05-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF%E6%95%99%E7%A8%8B/">技术教程</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="在资源紧张的云服务器上用-OpenCode-tmux-并行开发"><a href="#在资源紧张的云服务器上用-OpenCode-tmux-并行开发" class="headerlink" title="在资源紧张的云服务器上用 OpenCode + tmux 并行开发"></a>在资源紧张的云服务器上用 OpenCode + tmux 并行开发</h1><blockquote>
+<p>本方案面向需要在<strong>低配置云服务器</strong>（如 2C4G 或共享实例）上进行 AI 辅助开发的用户。通过 JupyterHub Terminal + tmux + OpenCode 的组合，你可以在<strong>单台资源紧张的服务器</strong>上并行推进多个任务，同时保证任务不会因网络波动或浏览器关闭而中断。</p>
+</blockquote>
+<hr>
+<h2 id="为什么需要这套方案"><a href="#为什么需要这套方案" class="headerlink" title="为什么需要这套方案"></a>为什么需要这套方案</h2><h3 id="现实痛点：资源紧张下的开发困境"><a href="#现实痛点：资源紧张下的开发困境" class="headerlink" title="现实痛点：资源紧张下的开发困境"></a>现实痛点：资源紧张下的开发困境</h3><p>在实际的科研和小型项目场景中，我们往往面临以下约束：</p>
+<ul>
+<li><strong>预算有限</strong>：只能负担低配置云服务器（2核4G 甚至更低），无法本地运行大型 IDE</li>
+<li><strong>网络不稳定</strong>：校园网或公共 WiFi 时常波动，SSH 连接容易断开</li>
+<li><strong>任务需要并行</strong>：比如一边让 AI 探索特征工程思路，一边让 AI 实现已确定的特征</li>
+<li><strong>后台任务不能断</strong>：模型训练、数据处理等长时任务，一旦中断就要重来</li>
+</ul>
+<p>传统的本地 IDE（VS Code、PyCharm）在这种环境下几乎无法使用——它们本身就要占用大量内存，而且一旦网络断开，所有运行中的进程都会随 SSH 会话一起被终止。</p>
+<h3 id="这套方案的优势"><a href="#这套方案的优势" class="headerlink" title="这套方案的优势"></a>这套方案的优势</h3><table>
+<thead>
+<tr>
+<th>痛点</th>
+<th>传统方案</th>
+<th>本方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内存占用</td>
+<td>VS Code Server 占用 1G+</td>
+<td>Terminal + tmux 几乎零额外开销</td>
+</tr>
+<tr>
+<td>网络中断</td>
+<td>所有进程终止</td>
+<td>tmux 会话保持，任务后台继续</td>
+</tr>
+<tr>
+<td>并行开发</td>
+<td>需要开多个 SSH 窗口管理混乱</td>
+<td>两个 tmux 会话，逻辑清晰</td>
+</tr>
+<tr>
+<td>AI 辅助</td>
+<td>依赖本地 Copilot，配置复杂</td>
+<td>OpenCode 直接读取自定义 skills</td>
+</tr>
+<tr>
+<td>技能同步</td>
+<td>手动复制粘贴 prompt</td>
+<td>直接上传 skills 文件夹覆盖</td>
+</tr>
+</tbody></table>
+<p><strong>核心思路</strong>：把 JupyterHub 的 Terminal 当作轻量级入口，tmux 作为会话守护者，OpenCode 作为 AI 助手。三者组合，在资源极度紧张的环境下也能实现”探索”与”实现”并行推进。</p>
+<hr>
+<h2 id="0-环境与整体思路"><a href="#0-环境与整体思路" class="headerlink" title="0. 环境与整体思路"></a>0. 环境与整体思路</h2><ul>
+<li><strong>环境</strong>：Ubuntu 云服务器（已部署 JupyterHub）+ Terminal + tmux + OpenCode</li>
+<li><strong>任务拆分</strong>：一个 Terminal 负责”特征工程探索”，另一个负责”特征工程实现”，并行运行</li>
+<li><strong>后台保护</strong>：每个任务被放入独立的 tmux 会话。关闭浏览器或网络中断后，任务仍会在服务器后台继续执行</li>
+</ul>
+<p>如果不使用 tmux 而直接在 Terminal 中运行任务，一旦关闭标签页或网络波动，任务大概率会被终止。除极短测试外，全程使用 tmux 是稳妥的做法。</p>
+<hr>
+<h2 id="1-前置操作（仅初次需要）"><a href="#1-前置操作（仅初次需要）" class="headerlink" title="1. 前置操作（仅初次需要）"></a>1. 前置操作（仅初次需要）</h2><h3 id="1-1-开启-8-GB-Swap（需-sudo）"><a href="#1-1-开启-8-GB-Swap（需-sudo）" class="headerlink" title="1.1 开启 8 GB Swap（需 sudo）"></a>1.1 开启 8 GB Swap（需 sudo）</h3><p>对于 4G 内存的服务器，Swap 不是可选项，而是<strong>必需品</strong>。OpenCode 运行时会占用一定内存，加上 Python 数据处理，物理内存很快耗尽。没有 Swap，OOM Killer 会直接终止你的进程。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fallocate -l 8G /swapfile</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chmod</span> 600 /swapfile</span><br><span class="line"><span class="built_in">sudo</span> mkswap /swapfile</span><br><span class="line"><span class="built_in">sudo</span> swapon /swapfile</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;/swapfile none swap sw 0 0&#x27;</span> | <span class="built_in">sudo</span> <span class="built_in">tee</span> -a /etc/fstab</span><br></pre></td></tr></table></figure>
+
+<p>完成后执行 <code>free -h</code>，确认 Swap 一行显示 <code>8.0Gi</code>。若当前账号无 sudo 权限，可将上述命令转发至服务器管理员执行。</p>
+<h3 id="1-2-安装-tmux"><a href="#1-2-安装-tmux" class="headerlink" title="1.2 安装 tmux"></a>1.2 安装 tmux</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update &amp;&amp; <span class="built_in">sudo</span> apt install tmux -y</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-安装-Node-js-20-与-OpenCode"><a href="#1-3-安装-Node-js-20-与-OpenCode" class="headerlink" title="1.3 安装 Node.js 20+ 与 OpenCode"></a>1.3 安装 Node.js 20+ 与 OpenCode</h3><p>OpenCode 依赖 Node.js ≥ 20。若服务器已有合适版本，可跳过 Node.js 安装。</p>
+<p>查看当前版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
+
+<p>版本低于 20 时，推荐使用 nvm 安装（避免与系统已有 Node 冲突）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">nvm install 20</span><br><span class="line">nvm <span class="built_in">alias</span> default 20</span><br></pre></td></tr></table></figure>
+
+<p>随后安装 OpenCode（全局）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g opencode</span><br></pre></td></tr></table></figure>
+
+<p>关闭当前 Terminal 并重新打开一个，执行 <code>opencode --version</code> 验证。</p>
+<hr>
+<h2 id="2-上传本地-skills-文件夹并覆盖-OpenCode-全局路径"><a href="#2-上传本地-skills-文件夹并覆盖-OpenCode-全局路径" class="headerlink" title="2. 上传本地 skills 文件夹并覆盖 OpenCode 全局路径"></a>2. 上传本地 skills 文件夹并覆盖 OpenCode 全局路径</h2><p>OpenCode 从 <code>~/.config/opencode/skills/&lt;技能名&gt;/SKILL.md</code> 读取知识库。本步骤将你本地整份 skills 文件夹上传至服务器，并以 <code>cp -r</code> 完整覆盖到对应技能目录。</p>
+<h3 id="2-1-通过-JupyterHub-直接上传文件夹"><a href="#2-1-通过-JupyterHub-直接上传文件夹" class="headerlink" title="2.1 通过 JupyterHub 直接上传文件夹"></a>2.1 通过 JupyterHub 直接上传文件夹</h3><p>在 JupyterHub 的文件管理界面（地址栏通常以 <code>/tree</code> 结尾），将你电脑上的 <code>skills</code> 文件夹整体拖拽到文件列表区域，即可上传。上传完成后，该文件夹会出现在服务器主目录下（例如 <code>/home/你的用户名/skills</code>）。</p>
+<h3 id="2-2-覆盖到-OpenCode-技能目录"><a href="#2-2-覆盖到-OpenCode-技能目录" class="headerlink" title="2.2 覆盖到 OpenCode 技能目录"></a>2.2 覆盖到 OpenCode 技能目录</h3><p>假设你打算使用的技能名称为 <code>feature-engineering</code>，执行以下命令，将上传的 <code>skills</code> 文件夹内容完整复制到目标位置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf ~/.config/opencode/skills/feature-engineering</span><br><span class="line"><span class="built_in">mkdir</span> -p ~/.config/opencode/skills/feature-engineering</span><br><span class="line"><span class="built_in">cp</span> -r ~/skills/* ~/.config/opencode/skills/feature-engineering/</span><br></pre></td></tr></table></figure>
+
+<p>验证核心文件已就位：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.config/opencode/skills/feature-engineering/SKILL.md</span><br></pre></td></tr></table></figure>
+
+<p>若正常输出你的 skills 内容，即表示部署完成。之后启动 OpenCode 时，它会自动识别并加载该目录下的知识。</p>
+<hr>
+<h2 id="3-并行运行两个任务"><a href="#3-并行运行两个任务" class="headerlink" title="3. 并行运行两个任务"></a>3. 并行运行两个任务</h2><h3 id="3-1-打开两个-Terminal-标签页"><a href="#3-1-打开两个-Terminal-标签页" class="headerlink" title="3.1 打开两个 Terminal 标签页"></a>3.1 打开两个 Terminal 标签页</h3><p>在 JupyterHub 的 Launcher 中点击两次 <code>Terminal</code>，获得两个并排的终端标签页。</p>
+<h3 id="3-2-左侧-Terminal：特征工程探索"><a href="#3-2-左侧-Terminal：特征工程探索" class="headerlink" title="3.2 左侧 Terminal：特征工程探索"></a>3.2 左侧 Terminal：特征工程探索</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tmux new -s feature-engineering</span><br><span class="line">opencode</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-右侧-Terminal：特征工程实现"><a href="#3-3-右侧-Terminal：特征工程实现" class="headerlink" title="3.3 右侧 Terminal：特征工程实现"></a>3.3 右侧 Terminal：特征工程实现</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tmux new -s feature-implementation</span><br><span class="line">opencode</span><br></pre></td></tr></table></figure>
+
+<p><strong>退出但保持任务运行</strong>：依次按下 <code>Ctrl+b</code>，然后按 <code>d</code>。<br><strong>重新进入查看</strong>：在任意 Terminal 中执行 <code>tmux attach -t feature-engineering</code> 或 <code>tmux attach -t feature-implementation</code>。</p>
+<p>具体的任务描述、操作方式等，在 OpenCode 交互界面内完成即可，详细用法请查阅 <a target="_blank" rel="noopener" href="https://opencode.ai/docs/zh-cn/">OpenCode 官方中文文档</a>。</p>
+<hr>
+<h2 id="4-资源监控（第三个-Terminal，推荐）"><a href="#4-资源监控（第三个-Terminal，推荐）" class="headerlink" title="4. 资源监控（第三个 Terminal，推荐）"></a>4. 资源监控（第三个 Terminal，推荐）</h2><p>打开第三个 Terminal 标签页，使用 btop 实时观察内存与 Swap 使用情况：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install btop -y</span><br><span class="line">btop</span><br></pre></td></tr></table></figure>
+
+<p>按 <code>q</code> 退出监控。</p>
+<hr>
+<h2 id="5-常见问题"><a href="#5-常见问题" class="headerlink" title="5. 常见问题"></a>5. 常见问题</h2><table>
+<thead>
+<tr>
+<th>现象</th>
+<th>可能原因</th>
+<th>处理方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>opencode</code> 提示 command not found</td>
+<td>安装未完成或 PATH 未刷新</td>
+<td>重新打开 Terminal 再试</td>
+</tr>
+<tr>
+<td><code>tmux attach</code> 无法进入会话</td>
+<td>会话已丢失（如服务器重启）</td>
+<td>执行 <code>tmux ls</code> 查看；若列表为空，需重建会话</td>
+</tr>
+<tr>
+<td>任务运行缓慢或中断</td>
+<td>内存紧张</td>
+<td>在 btop 中确认 Swap 已启用；若 Swap 也耗尽，可考虑降低并行度（参数详见 OpenCode 文档）</td>
+</tr>
+<tr>
+<td>上传的文件夹名称非 <code>skills</code></td>
+<td>上传时保留了原名</td>
+<td>将后续命令中的 <code>~/skills</code> 替换为实际文件夹名</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="6-补充说明"><a href="#6-补充说明" class="headerlink" title="6. 补充说明"></a>6. 补充说明</h2><ul>
+<li>两个任务建议使用不同的输出路径或文件名，避免互相覆盖。</li>
+<li>Swap 文件无需删除，可保留供后续使用。</li>
+<li>即使关闭浏览器，只要 tmux 会话存在，任务就不会中断。</li>
+</ul>
+<hr>
+<h2 id="7-方案总结：为什么这样好"><a href="#7-方案总结：为什么这样好" class="headerlink" title="7. 方案总结：为什么这样好"></a>7. 方案总结：为什么这样好</h2><p>在资源紧张的场景下，这套方案的价值不仅在于”能跑起来”，更在于<strong>以最小的系统开销获得最大的开发效率</strong>：</p>
+<ol>
+<li><p><strong>零 GUI 开销</strong>：JupyterHub Terminal 是纯文本界面，不占用显卡或大量内存；相比远程桌面或 VS Code Server，节省的资源可以直接分配给实际任务。</p>
+</li>
+<li><p><strong>会话持久化</strong>：tmux 是终端复用器中的经典工具，它将终端会话与 SSH 连接解耦。网络闪断、浏览器崩溃、笔记本合盖——都不会影响服务器上正在运行的进程。对于需要数小时甚至数天的特征工程任务，这是<strong>必需</strong>的保障。</p>
+</li>
+<li><p><strong>AI 技能可移植</strong>：通过 skills 文件夹，你可以把本地精心调优的 prompt 和知识库一键同步到服务器。OpenCode 会按照 SKILL.md 的指引工作，相当于给 AI 装上了”领域大脑”。</p>
+</li>
+<li><p><strong>并行不混乱</strong>：探索与实现是两个认知阶段，串行执行会浪费大量等待时间。用两个 tmux 会话并行推进，一边试错一边落地，整体效率接近翻倍——而在低配置机器上，这种时间节省尤为珍贵。</p>
+</li>
+<li><p><strong>可扩展性</strong>：这个模式不局限于特征工程。模型调参、数据清洗、代码重构——任何可以拆分为”探索+实现”或”任务 A+任务 B”的场景，都可以复用同一套工作流。</p>
+</li>
+</ol>
+<p>如果你也在用一台”刚好够用”的服务器做开发，不妨试试这套组合。它不会让你的机器变快，但会让你在有限的资源里，挤出更多实际的产出。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%95%99%E7%A8%8B/">教程</a><a class="post-meta__tags" href="/tags/%E5%B7%A5%E5%85%B7/">工具</a></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/05/06/%E4%BB%A3%E7%A0%81%E5%B1%95%E7%A4%BA%E4%B8%8E%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E6%BC%94%E7%A4%BA/" title="代码展示与文件下载演示"><img class="cover" src="/img/header.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">代码展示与文件下载演示</div></div><div class="info-2"><div class="info-item-1">📝 代码展示与文件下载完全指南本文演示如何在博客中优雅地展示代码，并提供文件下载功能。  1. 基础代码块（自带复制按钮）Butterfly 主题已经内置了代码复制功能，只需使用 Markdown 标准语法： 12345678910111213141516# 这是一个示例 Python 脚本def fibonacci(n):    &quot;&quot;&quot;生成斐波那契数列&quot;&quot;&quot;    if n &lt;= 0:        return []    elif n == 1:        return [0]        fib = [0,...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%A8%E8%B5%84%E6%BA%90%E7%B4%A7%E5%BC%A0%E7%9A%84%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%94%A8-OpenCode-tmux-%E5%B9%B6%E8%A1%8C%E5%BC%80%E5%8F%91"><span class="toc-number">1.</span> <span class="toc-text">在资源紧张的云服务器上用 OpenCode + tmux 并行开发</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%BF%99%E5%A5%97%E6%96%B9%E6%A1%88"><span class="toc-number">1.1.</span> <span class="toc-text">为什么需要这套方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%B0%E5%AE%9E%E7%97%9B%E7%82%B9%EF%BC%9A%E8%B5%84%E6%BA%90%E7%B4%A7%E5%BC%A0%E4%B8%8B%E7%9A%84%E5%BC%80%E5%8F%91%E5%9B%B0%E5%A2%83"><span class="toc-number">1.1.1.</span> <span class="toc-text">现实痛点：资源紧张下的开发困境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E5%A5%97%E6%96%B9%E6%A1%88%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">1.1.2.</span> <span class="toc-text">这套方案的优势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E7%8E%AF%E5%A2%83%E4%B8%8E%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-number">1.2.</span> <span class="toc-text">0. 环境与整体思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E7%BD%AE%E6%93%8D%E4%BD%9C%EF%BC%88%E4%BB%85%E5%88%9D%E6%AC%A1%E9%9C%80%E8%A6%81%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">1. 前置操作（仅初次需要）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%BC%80%E5%90%AF-8-GB-Swap%EF%BC%88%E9%9C%80-sudo%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">1.1 开启 8 GB Swap（需 sudo）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%AE%89%E8%A3%85-tmux"><span class="toc-number">1.3.2.</span> <span class="toc-text">1.2 安装 tmux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E5%AE%89%E8%A3%85-Node-js-20-%E4%B8%8E-OpenCode"><span class="toc-number">1.3.3.</span> <span class="toc-text">1.3 安装 Node.js 20+ 与 OpenCode</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%B8%8A%E4%BC%A0%E6%9C%AC%E5%9C%B0-skills-%E6%96%87%E4%BB%B6%E5%A4%B9%E5%B9%B6%E8%A6%86%E7%9B%96-OpenCode-%E5%85%A8%E5%B1%80%E8%B7%AF%E5%BE%84"><span class="toc-number">1.4.</span> <span class="toc-text">2. 上传本地 skills 文件夹并覆盖 OpenCode 全局路径</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E9%80%9A%E8%BF%87-JupyterHub-%E7%9B%B4%E6%8E%A5%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-number">1.4.1.</span> <span class="toc-text">2.1 通过 JupyterHub 直接上传文件夹</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E8%A6%86%E7%9B%96%E5%88%B0-OpenCode-%E6%8A%80%E8%83%BD%E7%9B%AE%E5%BD%95"><span class="toc-number">1.4.2.</span> <span class="toc-text">2.2 覆盖到 OpenCode 技能目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%B9%B6%E8%A1%8C%E8%BF%90%E8%A1%8C%E4%B8%A4%E4%B8%AA%E4%BB%BB%E5%8A%A1"><span class="toc-number">1.5.</span> <span class="toc-text">3. 并行运行两个任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%89%93%E5%BC%80%E4%B8%A4%E4%B8%AA-Terminal-%E6%A0%87%E7%AD%BE%E9%A1%B5"><span class="toc-number">1.5.1.</span> <span class="toc-text">3.1 打开两个 Terminal 标签页</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%B7%A6%E4%BE%A7-Terminal%EF%BC%9A%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B%E6%8E%A2%E7%B4%A2"><span class="toc-number">1.5.2.</span> <span class="toc-text">3.2 左侧 Terminal：特征工程探索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%8F%B3%E4%BE%A7-Terminal%EF%BC%9A%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.5.3.</span> <span class="toc-text">3.3 右侧 Terminal：特征工程实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%B5%84%E6%BA%90%E7%9B%91%E6%8E%A7%EF%BC%88%E7%AC%AC%E4%B8%89%E4%B8%AA-Terminal%EF%BC%8C%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">4. 资源监控（第三个 Terminal，推荐）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">1.7.</span> <span class="toc-text">5. 常见问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%A1%A5%E5%85%85%E8%AF%B4%E6%98%8E"><span class="toc-number">1.8.</span> <span class="toc-text">6. 补充说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E6%A0%B7%E5%A5%BD"><span class="toc-number">1.9.</span> <span class="toc-text">7. 方案总结：为什么这样好</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By 楼兰RE</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"><script>(() => {
+  const parseViewBox = viewBox => {
+    if (!viewBox) return null
+    const parts = viewBox.trim().split(/[\s,]+/).map(n => Number(n))
+    if (parts.length !== 4 || parts.some(n => Number.isNaN(n))) return null
+    return parts
+  }
+
+  const getSvgViewBox = svg => {
+    const attr = parseViewBox(svg.getAttribute('viewBox'))
+    if (attr) return attr
+
+    // Fallback: use bbox to build a viewBox
+    try {
+      const bbox = svg.getBBox()
+      if (bbox && bbox.width && bbox.height) return [bbox.x, bbox.y, bbox.width, bbox.height]
+    } catch (e) {
+      // getBBox may fail on some edge cases; ignore
+    }
+
+    const w = Number(svg.getAttribute('width')) || 0
+    const h = Number(svg.getAttribute('height')) || 0
+    if (w > 0 && h > 0) return [0, 0, w, h]
+    return [0, 0, 100, 100]
+  }
+
+  const setSvgViewBox = (svg, vb) => {
+    svg.setAttribute('viewBox', `${vb[0]} ${vb[1]} ${vb[2]} ${vb[3]}`)
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+
+  const openSvgInNewTab = ({ source, initViewBox }) => {
+    const getClonedSvg = () => {
+      if (typeof source === 'string') {
+        const template = document.createElement('template')
+        template.innerHTML = source.trim()
+        const svg = template.content.querySelector('svg')
+        return svg ? svg.cloneNode(true) : null
+      }
+      if (source && typeof source.cloneNode === 'function') {
+        return source.cloneNode(true)
+      }
+      return null
+    }
+
+    const clone = getClonedSvg()
+    if (!clone) return
+    if (initViewBox && initViewBox.length === 4) {
+      clone.setAttribute('viewBox', initViewBox.join(' '))
+    }
+    if (!clone.getAttribute('xmlns')) clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    if (!clone.getAttribute('xmlns:xlink') && clone.outerHTML.includes('xlink:')) {
+      clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+    }
+    // inject background to match current theme
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+    const bg = getComputedStyle(document.body).backgroundColor || (isDark ? '#1e1e1e' : '#ffffff')
+    if (!clone.style.background) clone.style.background = bg
+
+    const serializer = new XMLSerializer()
+    const svgSource = serializer.serializeToString(clone)
+    const htmlSource = `<!doctype html><html><head><meta charset="utf-8" />
+      <style>
+        html, body { width: 100%; height: 100%; margin: 0; display: flex; align-items: center; justify-content: center; background: ${bg}; }
+        svg { max-width: 100%; max-height: 100%; height: auto; width: auto; }
+      </style>
+      </head><body>${svgSource}</body></html>`
+    const blob = new Blob([htmlSource], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 30000)
+  }
+
+  const attachMermaidViewerButton = wrap => {
+    let btn = wrap.querySelector('.mermaid-open-btn')
+    if (!btn) {
+      btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'mermaid-open-btn'
+      wrap.appendChild(btn)
+    }
+
+    btn.innerHTML = '<i class="fa fa-search fa-fw" aria-hidden="true"></i>'
+
+    if (!btn.__mermaidViewerBound) {
+      btn.addEventListener('click', e => {
+        e.preventDefault()
+        e.stopPropagation()
+        const svg = wrap.__mermaidOriginalSvg || wrap.querySelector('svg')
+        if (!svg) return
+        const initViewBox = wrap.__mermaidInitViewBox
+        if (typeof svg === 'string') {
+          openSvgInNewTab({ source: svg, initViewBox })
+          return
+        }
+        openSvgInNewTab({ source: svg, initViewBox })
+      })
+      btn.__mermaidViewerBound = true
+    }
+  }
+
+  // Zoom around a point (px, py) in the SVG viewport (in viewBox coordinates)
+  const zoomAtPoint = (vb, factor, px, py) => {
+    const w = vb[2] * factor
+    const h = vb[3] * factor
+    const nx = px - (px - vb[0]) * factor
+    const ny = py - (py - vb[1]) * factor
+    return [nx, ny, w, h]
+  }
+
+  const initMermaidGestures = wrap => {
+    const svg = wrap.querySelector('svg')
+    if (!svg) return
+
+    // Ensure viewBox exists so gestures always work
+    const initVb = getSvgViewBox(svg)
+    wrap.__mermaidInitViewBox = initVb
+    wrap.__mermaidCurViewBox = initVb.slice()
+    setSvgViewBox(svg, initVb)
+
+    // Avoid binding multiple times on themeChange/pjax
+    if (wrap.__mermaidGestureBound) return
+    wrap.__mermaidGestureBound = true
+
+    // Helper: map client (viewport) coordinate -> viewBox coordinate
+    const clientToViewBox = (clientX, clientY) => {
+      const rect = svg.getBoundingClientRect()
+      const vb = wrap.__mermaidCurViewBox || getSvgViewBox(svg)
+      const x = vb[0] + (clientX - rect.left) * (vb[2] / rect.width)
+      const y = vb[1] + (clientY - rect.top) * (vb[3] / rect.height)
+      return { x, y, rect, vb }
+    }
+
+    const state = {
+      pointers: new Map(),
+      startVb: null,
+      startDist: 0,
+      startCenter: null
+    }
+
+    const clampVb = vb => {
+      const init = wrap.__mermaidInitViewBox || vb
+      const minW = init[2] * 0.1
+      const maxW = init[2] * 10
+      const minH = init[3] * 0.1
+      const maxH = init[3] * 10
+      vb[2] = clamp(vb[2], minW, maxW)
+      vb[3] = clamp(vb[3], minH, maxH)
+      return vb
+    }
+
+    const setCurVb = vb => {
+      vb = clampVb(vb)
+      wrap.__mermaidCurViewBox = vb
+      setSvgViewBox(svg, vb)
+    }
+
+    const onPointerDown = e => {
+      // Allow only primary button for mouse
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      svg.setPointerCapture(e.pointerId)
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      if (state.pointers.size === 1) {
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      } else if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        state.startDist = Math.hypot(dx, dy)
+        state.startVb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        state.startCenter = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }
+      }
+    }
+
+    const onPointerMove = e => {
+      if (!state.pointers.has(e.pointerId)) return
+      state.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+      // Pan with 1 pointer
+      if (state.pointers.size === 1 && state.startVb) {
+        const p = [...state.pointers.values()][0]
+        const prev = { x: e.clientX - e.movementX, y: e.clientY - e.movementY }
+        // movementX/Y unreliable on touch, compute from stored last position
+        const last = wrap.__mermaidLastSinglePointer || p
+        const dxClient = p.x - last.x
+        const dyClient = p.y - last.y
+        wrap.__mermaidLastSinglePointer = p
+
+        const { rect } = clientToViewBox(p.x, p.y)
+        const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+        const dx = dxClient * (vb[2] / rect.width)
+        const dy = dyClient * (vb[3] / rect.height)
+        setCurVb([vb[0] - dx, vb[1] - dy, vb[2], vb[3]])
+        return
+      }
+
+      // Pinch zoom with 2 pointers
+      if (state.pointers.size === 2 && state.startVb && state.startDist > 0) {
+        const pts = [...state.pointers.values()]
+        const dx = pts[0].x - pts[1].x
+        const dy = pts[0].y - pts[1].y
+        const dist = Math.hypot(dx, dy)
+        if (!dist) return
+        const factor = state.startDist / dist // dist bigger => zoom in (viewBox smaller)
+
+        const cx = (pts[0].x + pts[1].x) / 2
+        const cy = (pts[0].y + pts[1].y) / 2
+        const centerClient = { x: cx, y: cy }
+
+        const pxy = clientToViewBox(centerClient.x, centerClient.y)
+        const cpx = pxy.x
+        const cpy = pxy.y
+
+        const vb = zoomAtPoint(state.startVb, factor, cpx, cpy)
+        setCurVb(vb)
+      }
+    }
+
+    const onPointerUpOrCancel = e => {
+      state.pointers.delete(e.pointerId)
+      if (state.pointers.size === 0) {
+        state.startVb = null
+        state.startDist = 0
+        state.startCenter = null
+        wrap.__mermaidLastSinglePointer = null
+      } else if (state.pointers.size === 1) {
+        // reset single pointer baseline to avoid jump
+        wrap.__mermaidLastSinglePointer = [...state.pointers.values()][0]
+      }
+    }
+
+    // Wheel zoom (mouse/trackpad)
+    const onWheel = e => {
+      // ctrlKey on mac trackpad pinch; we treat both as zoom
+      e.preventDefault()
+      const delta = e.deltaY
+      const zoomFactor = delta > 0 ? 1.1 : 0.9
+      const { x, y } = clientToViewBox(e.clientX, e.clientY)
+      const vb = (wrap.__mermaidCurViewBox || getSvgViewBox(svg)).slice()
+      setCurVb(zoomAtPoint(vb, zoomFactor, x, y))
+    }
+
+    const onDblClick = () => {
+      const init = wrap.__mermaidInitViewBox
+      if (!init) return
+      wrap.__mermaidCurViewBox = init.slice()
+      setSvgViewBox(svg, init)
+    }
+
+    svg.addEventListener('pointerdown', onPointerDown)
+    svg.addEventListener('pointermove', onPointerMove)
+    svg.addEventListener('pointerup', onPointerUpOrCancel)
+    svg.addEventListener('pointercancel', onPointerUpOrCancel)
+    svg.addEventListener('wheel', onWheel, { passive: false })
+    svg.addEventListener('dblclick', onDblClick)
+  }
+
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+
+      // Clear old render (themeChange/pjax will rerun)
+      const oldSvg = item.querySelector('svg')
+      if (oldSvg) oldSvg.remove()
+      item.__mermaidGestureBound = false
+
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+        if (true) initMermaidGestures(item)
+        item.__mermaidOriginalSvg = svg
+        if (true) attachMermaidViewerButton(item)
+      }
+
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const applyThemeDefaultsConfig = theme => {
+    if (theme === 'dark-mode') {
+      Chart.defaults.color = "rgba(255, 255, 255, 0.8)"
+      Chart.defaults.borderColor = "rgba(255, 255, 255, 0.2)"
+      Chart.defaults.scale.ticks.backdropColor = "transparent"
+    } else {
+      Chart.defaults.color = "rgba(0, 0, 0, 0.8)"
+      Chart.defaults.borderColor = "rgba(0, 0, 0, 0.1)"
+      Chart.defaults.scale.ticks.backdropColor = "transparent"
+    }
+  }
+
+  // Recursively traverse the config object and automatically apply theme-specific color schemes
+  const applyThemeConfig = (obj, theme) => {
+    if (typeof obj !== 'object' || obj === null) return
+
+    Object.keys(obj).forEach(key => {
+      const value = obj[key]
+      // If the property is an object and has theme-specific options, apply them
+      if (typeof value === 'object' && value !== null) {
+        if (value[theme]) {
+          obj[key] = value[theme] // Apply the value for the current theme
+        } else {
+          // Recursively process child objects
+          applyThemeConfig(value, theme)
+        }
+      }
+    })
+  }
+
+  const runChartJS = ele => {
+    window.loadChartJS = true
+
+    Array.from(ele).forEach((item, index) => {
+      const chartSrc = item.firstElementChild
+      const chartID = item.getAttribute('data-chartjs-id') || ('chartjs-' + index) // Use custom ID or default ID
+      const width = item.getAttribute('data-width')
+      const existingCanvas = document.getElementById(chartID)
+
+      // If a canvas already exists, remove it to avoid rendering duplicates
+      if (existingCanvas) {
+          existingCanvas.parentNode.remove()
+      }
+
+      const chartDefinition = chartSrc.textContent
+      const canvas = document.createElement('canvas')
+      canvas.id = chartID
+
+      const div = document.createElement('div')
+      div.className = 'chartjs-wrap'
+
+      if (width) {
+        div.style.width = width
+      }
+
+      div.appendChild(canvas)
+      chartSrc.insertAdjacentElement('afterend', div)
+
+      const ctx = document.getElementById(chartID).getContext('2d')
+
+      const config = JSON.parse(chartDefinition)
+
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark-mode' : 'light-mode'
+
+      // Set default styles (initial setup)
+      applyThemeDefaultsConfig(theme)
+
+      // Automatically traverse the config and apply dual-mode color schemes
+      applyThemeConfig(config, theme)
+
+      new Chart(ctx, config)
+    })
+  }
+
+  const loadChartJS = () => {
+    const chartJSEle = document.querySelectorAll('#article-container .chartjs-container')
+    if (chartJSEle.length === 0) return
+
+    window.loadChartJS ? runChartJS(chartJSEle) : btf.getScript('https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js').then(() => runChartJS(chartJSEle))
+  }
+
+  // Listen for theme change events
+  btf.addGlobalFn('themeChange', loadChartJS, 'chartjs')
+  btf.addGlobalFn('encrypt', loadChartJS, 'chartjs')
+
+  window.pjax ? loadChartJS() : document.addEventListener('DOMContentLoaded', loadChartJS)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"data-mapping":"pathname","data-strict":"0","data-reactions-enabled":"1","data-emit-metadata":"0","data-input-position":"bottom","data-lang":"zh-CN"}
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'loulanrevo/loulanrevo.github.io',
+      'data-repo-id': 'R_kgDOSUjqyg',
+      'data-category-id': 'DIC_kwDOSUjqys4C8YTw',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="/js/blog-data-init.js"></script><script src="/js/load-blog-widget.js"></script><script>(() => {
+  const option = null
+  const config = {"site_uv":false,"site_pv":false,"page_pv":false,"token":null}
+
+  const runTrack = () => {
+    if (typeof umami !== 'undefined' && typeof umami.track === 'function') {
+      umami.track(props => ({ ...props, url: window.location.pathname, title: GLOBAL_CONFIG_SITE.title }))
+    } else {
+      console.warn('Umami Analytics: umami.track is not available')
+    }
+  }
+
+  const loadUmamiJS = () => {
+    btf.getScript('https://cloud.umami.is/script.js', {
+      'data-website-id': '203da544-b5e9-48d9-9fa8-10a44215018d',
+      'data-auto-track': 'false',
+      ...option
+    }).then(() => {
+      runTrack()
+    }).catch(error => {
+      console.error('Umami Analytics: Error loading script', error)
+    })
+  }
+
+  const getData = async (isPost) => {
+    try {
+      const now = Date.now()
+      const keyUrl = isPost ? `&url=${window.location.pathname}&path=${window.location.pathname}` : ''
+      const headerList = { 'Accept': 'application/json' }
+
+      if (false) {
+        headerList['Authorization'] = `Bearer ${config.token}`
+      } else {
+        headerList['x-umami-api-key'] = config.token
+      }
+
+      const res = await fetch(`https://api.umami.is/v1/websites/203da544-b5e9-48d9-9fa8-10a44215018d/stats?startAt=0000000000&endAt=${now}${keyUrl}`, {
+        method: "GET",
+        headers: headerList
+      })
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`)
+      }
+
+      return await res.json()
+    } catch (error) {
+      console.error('Umami Analytics: Failed to fetch data', error)
+      throw error
+    }
+  }
+
+  const insertData = async () => {
+    try {
+      if (GLOBAL_CONFIG_SITE.pageType === 'post' && config.page_pv) {
+        const pagePV = document.getElementById('umamiPV')
+        if (pagePV) {
+          const data = await getData(true)
+          if (data && data.pageviews) {
+            pagePV.textContent = typeof data.pageviews.value !== 'undefined' ? data.pageviews.value : data.pageviews
+          } else {
+            console.warn('Umami Analytics: Invalid page view data received')
+          }
+        }
+      }
+
+      if (config.site_uv || config.site_pv) {
+        const data = await getData(false)
+
+        if (config.site_uv) {
+          const siteUV = document.getElementById('umami-site-uv')
+          if (siteUV && data && data.visitors) {
+            siteUV.textContent = typeof data.visitors.value !== 'undefined' ? data.visitors.value : data.visitors
+          } else if (siteUV) {
+            console.warn('Umami Analytics: Invalid site UV data received')
+          }
+        }
+
+        if (config.site_pv) {
+          const sitePV = document.getElementById('umami-site-pv')
+          if (sitePV && data && data.pageviews) {
+            sitePV.textContent = typeof data.pageviews.value !== 'undefined' ? data.pageviews.value : data.pageviews
+          } else if (sitePV) {
+            console.warn('Umami Analytics: Invalid site PV data received')
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Umami Analytics: Failed to insert data', error)
+    }
+  }
+
+  btf.addGlobalFn('pjaxComplete', runTrack, 'umami_analytics_run_track')
+  btf.addGlobalFn('pjaxComplete', insertData, 'umami_analytics_insert')
+
+
+  loadUmamiJS()
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', insertData)
+  } else {
+    setTimeout(insertData, 100)
+  }
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>
