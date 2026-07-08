@@ -1,0 +1,35 @@
+# Hexo 多语言站点配置
+# 用于生成双语版本 (中文 / , 英文 /en/)
+hexo-multiple-language:
+  # ===== 默认语言（中文）配置 =====
+  default-language:
+    "generate-dir": "public"
+    "config-file-name":
+      - "config.zh"
+      - "config.butterfly.zh"
+
+  # ===== 其他语言（英文）配置 =====
+  other-language:
+    - "enable": true
+      "generate-dir": "public-en"
+      "language-path": "en"
+      "config-file-name":
+        - "config.en"
+        - "config.butterfly.en"
+
+  # ===== 浏览器语言自动切换配置 =====
+  switch-language:
+    enable: true
+    support-theme: "config.butterfly"
+    storage-ttl: 86400000
+    not-matched-use: "zh"
+    default-language:
+      - "zh"
+      - "zh-CN"
+      - "zh-TW"
+      - "zh-HK"
+    other-language:
+      "en":
+        - "en"
+        - "en-US"
+        - "en-GB"

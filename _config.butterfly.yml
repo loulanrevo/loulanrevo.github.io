@@ -1,3 +1,9 @@
+# ============================================================
+# DEPRECATED: 此文件不再用于多语言构建
+# 中文构建使用: config.butterfly.zh.yml
+# 英文构建使用: config.butterfly.en.yml
+# 此文件仅保留作为参考
+# ============================================================
 # Butterfly Theme Config
 # https://github.com/jerryc127/hexo-theme-butterfly
 

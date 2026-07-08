@@ -1,0 +1,62 @@
+# Hexo Configuration
+title: loulanre
+subtitle: '世界会遗忘，但骨白鸽不会'
+description: '感谢你在'
+keywords:
+author: 楼兰RE
+language: zh-CN
+timezone: 'Asia/Shanghai'
+
+url: https://loulanrevo.github.io
+root: /
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+pretty_urls:
+  trailing_index: true
+  trailing_html: true
+
+source_dir: source-zh
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+new_post_name: :title.md
+default_layout: post
+titlecase: false
+external_link:
+  enable: true
+  field: site
+  exclude: ''
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: true
+syntax_highlighter: highlight.js
+highlight:
+  enable: true
+prismjs:
+  enable: false
+
+# Theme
+theme: butterfly
+
+# search
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html
+
+# Deployment
+deploy:
+  type: git
+  repo: https://github.com/loulanrevo/loulanrevo.github.io.git
+  branch: main
+
+ignore:
+  - source-en/

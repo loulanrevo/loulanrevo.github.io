@@ -6,23 +6,26 @@
     "version": "8.1.2"
   },
   "scripts": {
-    "build": "hexo generate",
+    "build": "hexo multiple-language-generate",
+    "build:zh": "hexo generate",
+    "server": "hexo multiple-language-generate && hexo server",
+    "server:zh": "hexo server",
     "clean": "hexo clean",
-    "server": "hexo server",
-    "deploy": "hexo deploy"
+    "deploy": "hexo multiple-language-generate && hexo deploy"
   },
   "dependencies": {
     "hexo": "^8.1.2",
+    "hexo-deployer-git": "^4.0.0",
     "hexo-generator-archive": "^2.0.0",
     "hexo-generator-category": "^2.0.0",
     "hexo-generator-index": "^4.0.0",
     "hexo-generator-searchdb": "^1.5.0",
     "hexo-generator-tag": "^2.0.0",
+    "hexo-multiple-language-generate": "^1.0.8",
     "hexo-renderer-ejs": "^2.0.0",
     "hexo-renderer-marked": "^7.0.1",
     "hexo-renderer-stylus": "^3.0.1",
     "hexo-server": "^3.0.0",
-    "hexo-theme-butterfly": "^5.5.5",
-    "hexo-deployer-git": "^4.0.0"
+    "hexo-theme-butterfly": "^5.5.5"
   }
 }
