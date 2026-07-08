@@ -1,0 +1,136 @@
+# Butterfly Theme Config
+# https://github.com/jerryc127/hexo-theme-butterfly
+
+# Site info
+avatar:
+  img: /img/avatar.jpg
+  effect: true
+
+# Site banner
+disable_top_img: false
+index_img: /img/header.webp
+default_top_img: /img/header.webp
+archive_img: /img/header.webp
+tag_img: /img/header.webp
+category_img: /img/header.webp
+
+# Footer
+footer:
+  owner:
+    enable: true
+    since: 2025
+  copyright: false
+  custom_text:
+  framework: true
+  theme:
+    enable: true
+    text: 'Butterfly'
+
+# Dark mode
+darkmode:
+  enable: true
+  default: dark
+
+# Menu
+menu:
+  首页: / || fas fa-home
+  归档: /archives/ || fas fa-archive
+  标签: /tags/ || fas fa-tags
+  分类: /categories/ || fas fa-folder-open
+
+# Social icons
+social:
+  github: https://github.com/loulanrevo || fab fa-github || GitHub
+  zhihu: https://www.zhihu.com/people/loulanre || fab fa-zhihu || 知乎
+  bilibili: https://space.bilibili.com/loulanre || fab fa-bilibili || B站
+  netease_music: https://music.163.com/#/user/home?id=xxx || fab fa-music || 网易云
+
+# Code blocks
+code_blocks:
+  macStyle: true
+  height_limit: 500
+
+# Search
+search:
+  use: local_search
+  placeholder: null
+  local_search:
+    preload: true
+    top_n_per_article: 1
+    unescape: false
+    pagination:
+      enable: false
+      hitsPerPage: 8
+
+# Pjax
+pjax:
+  enable: true
+
+# Busuanzi
+busuanzi:
+  site_uv: false
+  site_pv: false
+  page_pv: false
+
+# Mermaid
+mermaid:
+  enable: true
+  version: "11.12.2"
+  theme:
+    light: default
+    dark: dark
+
+# Umami Analytics
+umami:
+  enable: true
+  website_id: 203da544-b5e9-48d9-9fa8-10a44215018d
+  url: https://cloud.umami.is/script.js
+  auto_track: false
+  pv: false
+  uv: false
+  page_pv: false
+
+# Inject custom CSS/JS
+inject:
+  head:
+    - '<style>
+      @keyframes borderGlow {
+        0% { border-color: #3f7cff; box-shadow: 0 0 5px #3f7cff; }
+        33% { border-color: #ff3f7c; box-shadow: 0 0 5px #ff3f7c; }
+        66% { border-color: #7cff3f; box-shadow: 0 0 5px #7cff3f; }
+        100% { border-color: #3f7cff; box-shadow: 0 0 5px #3f7cff; }
+      }
+      @keyframes buttonPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      .pan-link-card {
+        margin: 1rem 0; padding: 0.8rem; background: #1a1b1e;
+        border-radius: 8px; transition: all 0.3s;
+        border: 1px solid #2a2b2e; color: #e4e4e4; position: relative; overflow: hidden;
+      }
+      .pan-link-card:hover {
+        border-color: transparent; animation: borderGlow 4s linear infinite; transform: translateY(-2px);
+      }
+      .pan-link-content { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+      .pan-icon { margin-right: 12px; display: flex; align-items: center; transition: transform 0.3s; }
+      .pan-link-card:hover .pan-icon { transform: rotate(360deg); }
+      .pan-icon img { width: 24px; height: 24px; object-fit: contain; }
+      .pan-info { flex-grow: 1; transition: transform 0.3s; }
+      .pan-link-card:hover .pan-info { transform: translateX(5px); }
+      .pan-name { font-size: 1.1em; font-weight: bold; color: #e4e4e4; }
+      .pan-code { font-size: 0.9em; color: #888; margin-top: 4px; transition: color 0.3s; }
+      .pan-link-card:hover .pan-code { color: #aaa; }
+      .pan-button { background: #3f7cff; color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+      .pan-button:hover { background: #3365d6; animation: buttonPulse 1s ease-in-out infinite; }
+      .pan-button::after {
+        content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+        transform: rotate(45deg); transition: 0.3s; opacity: 0;
+      }
+      .pan-button:hover::after { opacity: 1; transform: rotate(45deg) translate(50%, 50%); }
+    </style>'
+  bottom:
+    - '<script src="/js/blog-data-init.js"></script>'
+    - '<script src="/js/load-blog-widget.js"></script>'
