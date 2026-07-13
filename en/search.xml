@@ -1,139 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>AI Parallel Development with OpenCode in JupyterHub Terminal</title>
-    <url>/en/2026/05/09/AI-Parallel-Dev-with-OpenCode-in-JupyterHub-Terminal/</url>
-    <content><![CDATA[<h1 id="AI-Parallel-Development-with-OpenCode-in-JupyterHub-Terminal"><a href="#AI-Parallel-Development-with-OpenCode-in-JupyterHub-Terminal" class="headerlink" title="AI Parallel Development with OpenCode in JupyterHub Terminal"></a>AI Parallel Development with OpenCode in JupyterHub Terminal</h1><blockquote>
-<p>JupyterHub’s Terminal is a seriously underrated feature. Most people only use JupyterHub for Notebooks, unaware that behind that inconspicuous Terminal icon lies a full Linux terminal —one powerful enough to support an AI-assisted parallel development workflow. This article introduces how to use JupyterHub Terminal + tmux + OpenCode to set up a lightweight yet complete AI parallel development environment right in your browser. If your server resources are already tight, this setup adds virtually zero overhead.</p>
-</blockquote>
-<hr>
-<h2 id="Why-JupyterHub-Terminal"><a href="#Why-JupyterHub-Terminal" class="headerlink" title="Why JupyterHub Terminal"></a>Why JupyterHub Terminal</h2><h3 id="JupyterHub’s-Terminal-The-Overlooked-Gateway"><a href="#JupyterHub’s-Terminal-The-Overlooked-Gateway" class="headerlink" title="JupyterHub’s Terminal: The Overlooked Gateway"></a>JupyterHub’s Terminal: The Overlooked Gateway</h3><p>JupyterHub is ubiquitous in academic and team settings —shared lab servers, course platforms, enterprise data analysis environments, you name it. But the vast majority of users stick to the Notebook interface: writing Python, running experiments, viewing charts.</p>
-<p>That <code>Terminal</code> button in the Launcher? Rarely clicked.</p>
-<p>That’s a shame. JupyterHub’s Terminal is essentially a full Bash terminal running directly on the server. It requires no extra installation, no SSH key configuration, no local client setup —just open your browser and go. For environments already running JupyterHub, it’s a zero-cost Linux workspace entry point.</p>
-<h3 id="Resource-Scarcity-Why-This-Matters"><a href="#Resource-Scarcity-Why-This-Matters" class="headerlink" title="Resource Scarcity: Why This Matters"></a>Resource Scarcity: Why This Matters</h3><p>On shared servers or low-spec cloud instances (2C4G or even less), every megabyte of RAM counts. VS Code Server gobbles up 1G+ just to start, and remote desktop solutions are even worse. The Terminal, being a pure text interface, adds virtually no extra resource consumption —it’s already running on the server with no additional rendering overhead.</p>
-<p>This means you don’t have to squeeze your already-tight memory just to get a “decent development environment.” The Terminal leaves all the saved resources for your actual tasks.</p>
-<h3 id="The-Core-Value-of-This-Setup"><a href="#The-Core-Value-of-This-Setup" class="headerlink" title="The Core Value of This Setup"></a>The Core Value of This Setup</h3><p>Using JupyterHub Terminal as your entry point, paired with tmux (session persistence) and OpenCode (AI coding assistant), you get:</p>
-<ul>
-<li><strong>Browser as development environment</strong>: No local tool installation needed —open a webpage and start working</li>
-<li><strong>Uninterrupted sessions</strong>: tmux decouples terminal sessions from the browser connection. Close the browser, lose network, switch devices —your tasks keep running</li>
-<li><strong>AI parallel development</strong>: Two tmux sessions each running an OpenCode instance —one exploring, one implementing, progressing in parallel</li>
-<li><strong>Zero extra overhead</strong>: Terminal + tmux memory usage is negligible, leaving all resources for actual tasks</li>
-</ul>
-<hr>
-<h2 id="Overall-Approach"><a href="#Overall-Approach" class="headerlink" title="Overall Approach"></a>Overall Approach</h2><ul>
-<li><strong>Environment</strong>: Ubuntu cloud server (with JupyterHub deployed) + Terminal + tmux + OpenCode</li>
-<li><strong>Task splitting</strong>: One Terminal handles “exploration” (e.g., feature engineering ideas), another handles “implementation” (e.g., feature code), running in parallel</li>
-<li><strong>Background protection</strong>: Each task runs in an independent tmux session. Closing the browser or losing network won’t kill the task —it continues executing in the server background</li>
-</ul>
-<p>If you run tasks directly in the Terminal without tmux, closing the tab or experiencing network fluctuation will most likely terminate them. Except for very brief tests, using tmux throughout is the safe approach.</p>
-<h3 id="Workflow-Architecture"><a href="#Workflow-Architecture" class="headerlink" title="Workflow Architecture"></a>Workflow Architecture</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    subgraph Browser[&quot;🌐 Browser&quot;]</span><br><span class="line">        T1[&quot;Terminal Tab 1&quot;]</span><br><span class="line">        T2[&quot;Terminal Tab 2&quot;]</span><br><span class="line">        T3[&quot;Terminal Tab 3 (Optional)&quot;]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph Server[&quot;🖥️Ubuntu Server&quot;]</span><br><span class="line">        subgraph TmuxSessions[&quot;tmux Session Layer&quot;]</span><br><span class="line">            S1[&quot;Session: explore&lt;br/&gt;OpenCode Explore Mode&quot;]</span><br><span class="line">            S2[&quot;Session: implement&lt;br/&gt;OpenCode Implement Mode&quot;]</span><br><span class="line">        end</span><br><span class="line">        JH[&quot;JupyterHub&lt;br/&gt;WebSocket Connection&quot;]</span><br><span class="line">        SWAP[&quot;8GB Swap&lt;br/&gt;Memory Buffer&quot;]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph AITasks[&quot;🤖 AI Parallel Tasks&quot;]</span><br><span class="line">        E1[&quot;Feature Engineering Exploration&quot;]</span><br><span class="line">        E2[&quot;Data Cleaning Strategy Discussion&quot;]</span><br><span class="line">        I1[&quot;Code Implementation&quot;]</span><br><span class="line">        I2[&quot;Test Case Writing&quot;]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    T1 --&gt;|WebSocket| JH</span><br><span class="line">    T2 --&gt;|WebSocket| JH</span><br><span class="line">    T3 --&gt;|WebSocket| JH</span><br><span class="line">    JH --&gt; S1</span><br><span class="line">    JH --&gt; S2</span><br><span class="line">    S1 --&gt; E1</span><br><span class="line">    S1 --&gt; E2</span><br><span class="line">    S2 --&gt; I1</span><br><span class="line">    S2 --&gt; I2</span><br><span class="line">    S1 -.-&gt; SWAP</span><br><span class="line">    S2 -.-&gt; SWAP</span><br><span class="line"></span><br><span class="line">    style Browser fill:#e3f2fd,stroke:#1565c0</span><br><span class="line">    style Server fill:#e8f5e9,stroke:#2e7d32</span><br><span class="line">    style AITasks fill:#fff3e0,stroke:#ef6c00</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="1-Prerequisites-One-time-Setup-Only"><a href="#1-Prerequisites-One-time-Setup-Only" class="headerlink" title="1. Prerequisites (One-time Setup Only)"></a>1. Prerequisites (One-time Setup Only)</h2><h3 id="1-1-Enable-8-GB-Swap-Requires-sudo"><a href="#1-1-Enable-8-GB-Swap-Requires-sudo" class="headerlink" title="1.1 Enable 8 GB Swap (Requires sudo)"></a>1.1 Enable 8 GB Swap (Requires sudo)</h3><p>For a server with 4GB RAM, Swap isn’t optional —it’s a <strong>necessity</strong>. OpenCode consumes memory at runtime, and combined with Python data processing, physical memory runs out quickly. Without Swap, the OOM Killer will terminate your processes without mercy.</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fallocate -l 8G /swapfile</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chmod</span> 600 /swapfile</span><br><span class="line"><span class="built_in">sudo</span> mkswap /swapfile</span><br><span class="line"><span class="built_in">sudo</span> swapon /swapfile</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;/swapfile none swap sw 0 0&#x27;</span> | <span class="built_in">sudo</span> <span class="built_in">tee</span> -a /etc/fstab</span><br></pre></td></tr></table></figure>
-
-<p>After completion, run <code>free -h</code> and confirm the Swap line shows <code>8.0Gi</code>. If your account lacks sudo access, forward these commands to your server administrator.</p>
-<h3 id="1-2-Install-tmux"><a href="#1-2-Install-tmux" class="headerlink" title="1.2 Install tmux"></a>1.2 Install tmux</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update &amp;&amp; <span class="built_in">sudo</span> apt install tmux -y</span><br></pre></td></tr></table></figure>
-
-<h3 id="1-3-Install-Node-js-20-and-OpenCode"><a href="#1-3-Install-Node-js-20-and-OpenCode" class="headerlink" title="1.3 Install Node.js 20+ and OpenCode"></a>1.3 Install Node.js 20+ and OpenCode</h3><p>OpenCode requires Node.js ≥20. If the server already has a suitable version, skip the Node.js installation.</p>
-<p>Check the current version:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
-
-<p>If the version is below 20, install via nvm (avoids conflicts with existing system Node):</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">nvm install 20</span><br><span class="line">nvm <span class="built_in">alias</span> default 20</span><br></pre></td></tr></table></figure>
-
-<p>Then install OpenCode (globally):</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g opencode</span><br></pre></td></tr></table></figure>
-
-<p>Close the current Terminal and reopen a new one, then run <code>opencode --version</code> to verify.</p>
-<hr>
-<h2 id="2-Upload-Local-Skills-Folder-and-Overwrite-OpenCode-Global-Path"><a href="#2-Upload-Local-Skills-Folder-and-Overwrite-OpenCode-Global-Path" class="headerlink" title="2. Upload Local Skills Folder and Overwrite OpenCode Global Path"></a>2. Upload Local Skills Folder and Overwrite OpenCode Global Path</h2><p>OpenCode reads knowledge bases from <code>~/.config/opencode/skills/&lt;skill-name&gt;/SKILL.md</code>. This step uploads your local <code>skills</code> folder to the server and uses <code>cp -r</code> to fully overwrite the corresponding skill directory.</p>
-<h3 id="2-1-Upload-the-Folder-via-JupyterHub"><a href="#2-1-Upload-the-Folder-via-JupyterHub" class="headerlink" title="2.1 Upload the Folder via JupyterHub"></a>2.1 Upload the Folder via JupyterHub</h3><p>In JupyterHub’s file management interface (the URL typically ends with <code>/tree</code>), drag and drop your local <code>skills</code> folder onto the file list area to upload. Once uploaded, the folder will appear in your home directory on the server (e.g., <code>/home/your-username/skills</code>).</p>
-<h3 id="2-2-Overwrite-to-OpenCode-Skills-Directory"><a href="#2-2-Overwrite-to-OpenCode-Skills-Directory" class="headerlink" title="2.2 Overwrite to OpenCode Skills Directory"></a>2.2 Overwrite to OpenCode Skills Directory</h3><p>Assuming the skill you want to use is named <code>feature-engineering</code>, run the following commands to copy the uploaded <code>skills</code> folder contents to the target location:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf ~/.config/opencode/skills/feature-engineering</span><br><span class="line"><span class="built_in">mkdir</span> -p ~/.config/opencode/skills/feature-engineering</span><br><span class="line"><span class="built_in">cp</span> -r ~/skills/* ~/.config/opencode/skills/feature-engineering/</span><br></pre></td></tr></table></figure>
-
-<p>Verify the core file is in place:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.config/opencode/skills/feature-engineering/SKILL.md</span><br></pre></td></tr></table></figure>
-
-<p>If it outputs your skills content normally, the deployment is complete. When you start OpenCode next time, it will automatically recognize and load the knowledge from that directory.</p>
-<hr>
-<h2 id="3-Running-Two-Tasks-in-Parallel"><a href="#3-Running-Two-Tasks-in-Parallel" class="headerlink" title="3. Running Two Tasks in Parallel"></a>3. Running Two Tasks in Parallel</h2><h3 id="3-1-Open-Two-Terminal-Tabs"><a href="#3-1-Open-Two-Terminal-Tabs" class="headerlink" title="3.1 Open Two Terminal Tabs"></a>3.1 Open Two Terminal Tabs</h3><p>In JupyterHub’s Launcher, click <code>Terminal</code> twice to get two side-by-side terminal tabs.</p>
-<h3 id="3-2-tmux-Session-Lifecycle"><a href="#3-2-tmux-Session-Lifecycle" class="headerlink" title="3.2 tmux Session Lifecycle"></a>3.2 tmux Session Lifecycle</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">stateDiagram-v2</span><br><span class="line">    [*] --&gt; NewSession: tmux new -s explore</span><br><span class="line">    [*] --&gt; NewSession: tmux new -s implement</span><br><span class="line">    NewSession --&gt; Running: opencode starts</span><br><span class="line">    Running --&gt; Background: Ctrl+b, d</span><br><span class="line">    Background --&gt; Reattach: tmux attach -t &lt;name&gt;</span><br><span class="line">    Reattach --&gt; Running: Continue interaction</span><br><span class="line">    Running --&gt; Ended: exit / Task complete</span><br><span class="line">    Background --&gt; Ended: Server reboot</span><br><span class="line">    Ended --&gt; [*]</span><br><span class="line"></span><br><span class="line">    note right of Background</span><br><span class="line">        Close browser, lose network, switch devices</span><br><span class="line">        Tasks are unaffected and keep running</span><br><span class="line">    end note</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-3-Left-Terminal-Exploration-Task"><a href="#3-3-Left-Terminal-Exploration-Task" class="headerlink" title="3.3 Left Terminal: Exploration Task"></a>3.3 Left Terminal: Exploration Task</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tmux new -s explore</span><br><span class="line">opencode</span><br></pre></td></tr></table></figure>
-
-<h3 id="3-4-Right-Terminal-Implementation-Task"><a href="#3-4-Right-Terminal-Implementation-Task" class="headerlink" title="3.4 Right Terminal: Implementation Task"></a>3.4 Right Terminal: Implementation Task</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tmux new -s implement</span><br><span class="line">opencode</span><br></pre></td></tr></table></figure>
-
-<p><strong>Detach but keep tasks running</strong>: Press <code>Ctrl+b</code>, then press <code>d</code>.<br><strong>Reattach to check</strong>: In any Terminal, run <code>tmux attach -t explore</code> or <code>tmux attach -t implement</code>.</p>
-<p>For specific task descriptions and interaction methods, complete them within the OpenCode interface. For detailed usage, check the <a href="https://opencode.ai/docs/zh-cn/">OpenCode Official Documentation</a>.</p>
-<hr>
-<h2 id="4-Resource-Monitoring-Third-Terminal-Recommended"><a href="#4-Resource-Monitoring-Third-Terminal-Recommended" class="headerlink" title="4. Resource Monitoring (Third Terminal, Recommended)"></a>4. Resource Monitoring (Third Terminal, Recommended)</h2><p>Open a third Terminal tab and use btop to monitor memory and Swap usage in real time:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install btop -y</span><br><span class="line">btop</span><br></pre></td></tr></table></figure>
-
-<p>Press <code>q</code> to exit monitoring.</p>
-<p>In resource-constrained environments, developing a monitoring habit is especially important. When you notice Swap utilization climbing steadily, it means physical RAM is running low —at that point, consider reducing parallelism and letting one task finish before starting the next.</p>
-<hr>
-<h2 id="5-FAQ"><a href="#5-FAQ" class="headerlink" title="5. FAQ"></a>5. FAQ</h2><table>
-<thead>
-<tr>
-<th>Symptom</th>
-<th>Possible Cause</th>
-<th>Solution</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>opencode</code> shows command not found</td>
-<td>Installation incomplete or PATH not refreshed</td>
-<td>Reopen Terminal and try again</td>
-</tr>
-<tr>
-<td><code>tmux attach</code> cannot enter session</td>
-<td>Session lost (e.g., server rebooted)</td>
-<td>Run <code>tmux ls</code> to check; if the list is empty, recreate the session</td>
-</tr>
-<tr>
-<td>Tasks run slowly or get interrupted</td>
-<td>Memory pressure</td>
-<td>Confirm Swap is enabled in btop; if Swap is also exhausted, consider reducing parallelism</td>
-</tr>
-<tr>
-<td>Uploaded folder name is not <code>skills</code></td>
-<td>Original name was preserved during upload</td>
-<td>Replace <code>~/skills</code> in subsequent commands with the actual folder name</td>
-</tr>
-<tr>
-<td>JupyterHub Terminal won’t open</td>
-<td>Browser blocked popup</td>
-<td>Allow popups for the site, or manually open in a new tab</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="6-Additional-Notes"><a href="#6-Additional-Notes" class="headerlink" title="6. Additional Notes"></a>6. Additional Notes</h2><ul>
-<li>Two tasks should use different output paths or filenames to avoid overwriting each other.</li>
-<li>The Swap file doesn’t need to be deleted —keep it for future use.</li>
-<li>Even if you close the browser, as long as tmux sessions exist, tasks won’t be interrupted.</li>
-<li>If the server reboots, tmux sessions will be lost and need to be recreated. However, OpenCode’s skills configuration won’t be lost.</li>
-</ul>
-<hr>
-<h2 id="7-Why-This-Works-The-Value-of-This-Approach"><a href="#7-Why-This-Works-The-Value-of-This-Approach" class="headerlink" title="7. Why This Works: The Value of This Approach"></a>7. Why This Works: The Value of This Approach</h2><p>Back to the opening question: why do this in JupyterHub Terminal?</p>
-<p><strong>Terminal is JupyterHub’s hidden superpower.</strong> It requires no extra deployment, no admin approval, no client installation —as long as you have a JupyterHub account, you have a full Linux terminal. It’s a zero-barrier starting point.</p>
-<p><strong>tmux decouples terminal sessions from the browser.</strong> JupyterHub’s Terminal relies on WebSocket connections —once the network drops, the terminal freezes. But tmux keeps processes in the server background, completely decoupled from the frontend connection. You can check progress from your phone via JupyterHub, or close your laptop to grab lunch —come back, <code>tmux attach</code>, and everything is right where you left off.</p>
-<p><strong>OpenCode upgrades Terminal from “command line” to “AI workstation.”</strong> Pure terminal interaction isn’t exactly beginner-friendly, but OpenCode’s TUI interface lowers the interaction complexity. More importantly, through the skills mechanism, you can inject domain knowledge into the AI and have it work according to your specifications and thought processes —this isn’t a generic chatbot, but a dedicated assistant with a “domain brain.”</p>
-<p><strong>Parallelism is an efficiency multiplier.</strong> Exploration and implementation are two different cognitive modes: exploration demands divergent thinking, implementation demands focused execution. Switching between them serially wastes enormous time on context switching. Two tmux sessions each running an OpenCode —one trying things out while the other lands code —nearly doubles overall efficiency. In resource-constrained environments, this time savings is especially precious.</p>
-<p><strong>Zero resource waste.</strong> Terminal + tmux memory usage is negligible, and OpenCode itself is lightweight. Compared to VS Code Server’s typical 1G+ overhead, this setup leaves every megabyte of RAM for your actual tasks. On a 4GB machine, this could be the difference between “runs fine” and “can’t run at all.”</p>
-<p>This approach applies far beyond feature engineering. Hyperparameter tuning, data cleaning, code refactoring, documentation writing —any scenario that can be split into “exploration + implementation” or “Task A + Task B” can reuse the same workflow. If you already have JupyterHub, give that Terminal button a click —it’s more powerful than you think.</p>
-]]></content>
-      <categories>
-        <category>Technical Tutorial</category>
-        <category>DevOps</category>
-      </categories>
-      <tags>
-        <tag>DevOps</tag>
-        <tag>Tools</tag>
-        <tag>Tutorial</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2026 AI IPO Boom Deep Dive</title>
     <url>/en/2026/06/02/2026-AI-IPO-Boom-Deep-Dive/</url>
     <content><![CDATA[<script>
@@ -352,6 +219,26 @@
       </tags>
   </entry>
   <entry>
+    <title>Dark-and-Darker Three-Day Binge</title>
+    <url>/en/2025/05/25/Dark-and-Darker-Three-Day-Binge/</url>
+    <content><![CDATA[<p>Three days of playtime over the weekend<br>So fun it felt like being young again<br>The gameplay is an adventurer party exploring dungeons —JRPG-style Western fantasy, D&amp;D<br>If you love Frieren[^1] or Delicious in Dungeon[^2], you absolutely have to try it<br>Currently short on backline&#x2F;support —Sorcerers&#x2F;Wizards&#x2F;Warlocks&#x2F;Druids&#x2F;Bards&#x2F;Rangers etc. needed<br>Fighters&#x2F;Barbarians&#x2F;Rogues equally welcome<br>Though my class is Cleric, my cantrips and gear setup have me fully frontline tanking<br>Free to play on Steam<br>Come explore dungeons in Dark and Darker</p>
+<p><img src="/en/img/qzone/2025-05-25_1.jpg"><br><img src="/en/img/qzone/2025-05-25_2.jpg"><br><img src="/img/qzone/2025-05-25_3.jpg" alt="" class="img-very-tall"></p>
+<hr>
+<p><strong>💬 Comments</strong></p>
+<ul>
+<li><strong>abc</strong> (2025-05-26 00:26): We need more people</li>
+</ul>
+<p>[^1]: <em>Frieren: Beyond Journey’s End</em> (葬送のフリーレン) —a Japanese manga and anime series following an elf mage’s journey after the defeat of the Demon King, acclaimed for its contemplative take on mortality and memory.<br>[^2]: <em>Delicious in Dungeon</em> (ダンジョン飯) —a Japanese manga and anime series where an adventuring party cooks and eats the monsters they encounter in a dungeon. A beloved blend of fantasy and gourmet cooking.</p>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+      </categories>
+      <tags>
+        <tag>Gaming</tag>
+        <tag>DnD</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Daily Rituals How Artists Work - Introduction</title>
     <url>/en/2025/02/13/Daily-Rituals-How-Artists-Work-Introduction/</url>
     <content><![CDATA[<p><img src="/en/img/daily-rituals-cover.jpg"></p>
@@ -414,26 +301,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Dark-and-Darker Three-Day Binge</title>
-    <url>/en/2025/05/25/Dark-and-Darker-Three-Day-Binge/</url>
-    <content><![CDATA[<p>Three days of playtime over the weekend<br>So fun it felt like being young again<br>The gameplay is an adventurer party exploring dungeons —JRPG-style Western fantasy, D&amp;D<br>If you love Frieren[^1] or Delicious in Dungeon[^2], you absolutely have to try it<br>Currently short on backline&#x2F;support —Sorcerers&#x2F;Wizards&#x2F;Warlocks&#x2F;Druids&#x2F;Bards&#x2F;Rangers etc. needed<br>Fighters&#x2F;Barbarians&#x2F;Rogues equally welcome<br>Though my class is Cleric, my cantrips and gear setup have me fully frontline tanking<br>Free to play on Steam<br>Come explore dungeons in Dark and Darker</p>
-<p><img src="/en/img/qzone/2025-05-25_1.jpg"><br><img src="/en/img/qzone/2025-05-25_2.jpg"><br><img src="/img/qzone/2025-05-25_3.jpg" alt="" class="img-very-tall"></p>
-<hr>
-<p><strong>💬 Comments</strong></p>
-<ul>
-<li><strong>abc</strong> (2025-05-26 00:26): We need more people</li>
-</ul>
-<p>[^1]: <em>Frieren: Beyond Journey’s End</em> (葬送のフリーレン —a Japanese manga and anime series following an elf mage’s journey after the defeat of the Demon King, acclaimed for its contemplative take on mortality and memory.<br>[^2]: <em>Delicious in Dungeon</em> (ダンジョン飯 —a Japanese manga and anime series where an adventuring party cooks and eats the monsters they encounter in a dungeon. A beloved blend of fantasy and gourmet cooking.</p>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-      </categories>
-      <tags>
-        <tag>Gaming</tag>
-        <tag>DnD</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Fandom Victory</title>
     <url>/en/2025/01/05/Fandom-Victory/</url>
     <content><![CDATA[<p>It reached him, it reached him![^1]<br>Read so many of his personal stories and translated articles<br>Inspired by that open-source spirit, I made some contributions of my own<br>My further reading on the original text got noticed<br>FAN!DOM! VIC!TORY!<br>In an instant —understood, became, a cognition stan[^2]<br>Haha, alright, today I’m the happiest<br><img src="/en/img/qzone/2025-01-05_1.jpg"><br><img src="/en/img/qzone/2025-01-05_2.jpg"></p>
@@ -446,6 +313,152 @@
         <tag>Fandom</tag>
         <tag>Open Source</tag>
         <tag>Joy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>AI Parallel Development with OpenCode in JupyterHub Terminal</title>
+    <url>/en/2026/05/09/AI-Parallel-Dev-with-OpenCode-in-JupyterHub-Terminal/</url>
+    <content><![CDATA[<h1 id="AI-Parallel-Development-with-OpenCode-in-JupyterHub-Terminal"><a href="#AI-Parallel-Development-with-OpenCode-in-JupyterHub-Terminal" class="headerlink" title="AI Parallel Development with OpenCode in JupyterHub Terminal"></a>AI Parallel Development with OpenCode in JupyterHub Terminal</h1><blockquote>
+<p>JupyterHub’s Terminal is a seriously underrated feature. Most people only use JupyterHub for Notebooks, unaware that behind that inconspicuous Terminal icon lies a full Linux terminal —one powerful enough to support an AI-assisted parallel development workflow. This article introduces how to use JupyterHub Terminal + tmux + OpenCode to set up a lightweight yet complete AI parallel development environment right in your browser. If your server resources are already tight, this setup adds virtually zero overhead.</p>
+</blockquote>
+<hr>
+<h2 id="Why-JupyterHub-Terminal"><a href="#Why-JupyterHub-Terminal" class="headerlink" title="Why JupyterHub Terminal"></a>Why JupyterHub Terminal</h2><h3 id="JupyterHub’s-Terminal-The-Overlooked-Gateway"><a href="#JupyterHub’s-Terminal-The-Overlooked-Gateway" class="headerlink" title="JupyterHub’s Terminal: The Overlooked Gateway"></a>JupyterHub’s Terminal: The Overlooked Gateway</h3><p>JupyterHub is ubiquitous in academic and team settings —shared lab servers, course platforms, enterprise data analysis environments, you name it. But the vast majority of users stick to the Notebook interface: writing Python, running experiments, viewing charts.</p>
+<p>That <code>Terminal</code> button in the Launcher? Rarely clicked.</p>
+<p>That’s a shame. JupyterHub’s Terminal is essentially a full Bash terminal running directly on the server. It requires no extra installation, no SSH key configuration, no local client setup —just open your browser and go. For environments already running JupyterHub, it’s a zero-cost Linux workspace entry point.</p>
+<h3 id="Resource-Scarcity-Why-This-Matters"><a href="#Resource-Scarcity-Why-This-Matters" class="headerlink" title="Resource Scarcity: Why This Matters"></a>Resource Scarcity: Why This Matters</h3><p>On shared servers or low-spec cloud instances (2C4G or even less), every megabyte of RAM counts. VS Code Server gobbles up 1G+ just to start, and remote desktop solutions are even worse. The Terminal, being a pure text interface, adds virtually no extra resource consumption —it’s already running on the server with no additional rendering overhead.</p>
+<p>This means you don’t have to squeeze your already-tight memory just to get a “decent development environment.” The Terminal leaves all the saved resources for your actual tasks.</p>
+<h3 id="The-Core-Value-of-This-Setup"><a href="#The-Core-Value-of-This-Setup" class="headerlink" title="The Core Value of This Setup"></a>The Core Value of This Setup</h3><p>Using JupyterHub Terminal as your entry point, paired with tmux (session persistence) and OpenCode (AI coding assistant), you get:</p>
+<ul>
+<li><strong>Browser as development environment</strong>: No local tool installation needed —open a webpage and start working</li>
+<li><strong>Uninterrupted sessions</strong>: tmux decouples terminal sessions from the browser connection. Close the browser, lose network, switch devices —your tasks keep running</li>
+<li><strong>AI parallel development</strong>: Two tmux sessions each running an OpenCode instance —one exploring, one implementing, progressing in parallel</li>
+<li><strong>Zero extra overhead</strong>: Terminal + tmux memory usage is negligible, leaving all resources for actual tasks</li>
+</ul>
+<hr>
+<h2 id="Overall-Approach"><a href="#Overall-Approach" class="headerlink" title="Overall Approach"></a>Overall Approach</h2><ul>
+<li><strong>Environment</strong>: Ubuntu cloud server (with JupyterHub deployed) + Terminal + tmux + OpenCode</li>
+<li><strong>Task splitting</strong>: One Terminal handles “exploration” (e.g., feature engineering ideas), another handles “implementation” (e.g., feature code), running in parallel</li>
+<li><strong>Background protection</strong>: Each task runs in an independent tmux session. Closing the browser or losing network won’t kill the task —it continues executing in the server background</li>
+</ul>
+<p>If you run tasks directly in the Terminal without tmux, closing the tab or experiencing network fluctuation will most likely terminate them. Except for very brief tests, using tmux throughout is the safe approach.</p>
+<h3 id="Workflow-Architecture"><a href="#Workflow-Architecture" class="headerlink" title="Workflow Architecture"></a>Workflow Architecture</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    subgraph Browser[&quot;🌐 Browser&quot;]</span><br><span class="line">        T1[&quot;Terminal Tab 1&quot;]</span><br><span class="line">        T2[&quot;Terminal Tab 2&quot;]</span><br><span class="line">        T3[&quot;Terminal Tab 3 (Optional)&quot;]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph Server[&quot;🖥️Ubuntu Server&quot;]</span><br><span class="line">        subgraph TmuxSessions[&quot;tmux Session Layer&quot;]</span><br><span class="line">            S1[&quot;Session: explore&lt;br/&gt;OpenCode Explore Mode&quot;]</span><br><span class="line">            S2[&quot;Session: implement&lt;br/&gt;OpenCode Implement Mode&quot;]</span><br><span class="line">        end</span><br><span class="line">        JH[&quot;JupyterHub&lt;br/&gt;WebSocket Connection&quot;]</span><br><span class="line">        SWAP[&quot;8GB Swap&lt;br/&gt;Memory Buffer&quot;]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph AITasks[&quot;🤖 AI Parallel Tasks&quot;]</span><br><span class="line">        E1[&quot;Feature Engineering Exploration&quot;]</span><br><span class="line">        E2[&quot;Data Cleaning Strategy Discussion&quot;]</span><br><span class="line">        I1[&quot;Code Implementation&quot;]</span><br><span class="line">        I2[&quot;Test Case Writing&quot;]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    T1 --&gt;|WebSocket| JH</span><br><span class="line">    T2 --&gt;|WebSocket| JH</span><br><span class="line">    T3 --&gt;|WebSocket| JH</span><br><span class="line">    JH --&gt; S1</span><br><span class="line">    JH --&gt; S2</span><br><span class="line">    S1 --&gt; E1</span><br><span class="line">    S1 --&gt; E2</span><br><span class="line">    S2 --&gt; I1</span><br><span class="line">    S2 --&gt; I2</span><br><span class="line">    S1 -.-&gt; SWAP</span><br><span class="line">    S2 -.-&gt; SWAP</span><br><span class="line"></span><br><span class="line">    style Browser fill:#e3f2fd,stroke:#1565c0</span><br><span class="line">    style Server fill:#e8f5e9,stroke:#2e7d32</span><br><span class="line">    style AITasks fill:#fff3e0,stroke:#ef6c00</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="1-Prerequisites-One-time-Setup-Only"><a href="#1-Prerequisites-One-time-Setup-Only" class="headerlink" title="1. Prerequisites (One-time Setup Only)"></a>1. Prerequisites (One-time Setup Only)</h2><h3 id="1-1-Enable-8-GB-Swap-Requires-sudo"><a href="#1-1-Enable-8-GB-Swap-Requires-sudo" class="headerlink" title="1.1 Enable 8 GB Swap (Requires sudo)"></a>1.1 Enable 8 GB Swap (Requires sudo)</h3><p>For a server with 4GB RAM, Swap isn’t optional —it’s a <strong>necessity</strong>. OpenCode consumes memory at runtime, and combined with Python data processing, physical memory runs out quickly. Without Swap, the OOM Killer will terminate your processes without mercy.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fallocate -l 8G /swapfile</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chmod</span> 600 /swapfile</span><br><span class="line"><span class="built_in">sudo</span> mkswap /swapfile</span><br><span class="line"><span class="built_in">sudo</span> swapon /swapfile</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;/swapfile none swap sw 0 0&#x27;</span> | <span class="built_in">sudo</span> <span class="built_in">tee</span> -a /etc/fstab</span><br></pre></td></tr></table></figure>
+
+<p>After completion, run <code>free -h</code> and confirm the Swap line shows <code>8.0Gi</code>. If your account lacks sudo access, forward these commands to your server administrator.</p>
+<h3 id="1-2-Install-tmux"><a href="#1-2-Install-tmux" class="headerlink" title="1.2 Install tmux"></a>1.2 Install tmux</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update &amp;&amp; <span class="built_in">sudo</span> apt install tmux -y</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-Install-Node-js-20-and-OpenCode"><a href="#1-3-Install-Node-js-20-and-OpenCode" class="headerlink" title="1.3 Install Node.js 20+ and OpenCode"></a>1.3 Install Node.js 20+ and OpenCode</h3><p>OpenCode requires Node.js ≥20. If the server already has a suitable version, skip the Node.js installation.</p>
+<p>Check the current version:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
+
+<p>If the version is below 20, install via nvm (avoids conflicts with existing system Node):</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash</span><br><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br><span class="line">nvm install 20</span><br><span class="line">nvm <span class="built_in">alias</span> default 20</span><br></pre></td></tr></table></figure>
+
+<p>Then install OpenCode (globally):</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g opencode</span><br></pre></td></tr></table></figure>
+
+<p>Close the current Terminal and reopen a new one, then run <code>opencode --version</code> to verify.</p>
+<hr>
+<h2 id="2-Upload-Local-Skills-Folder-and-Overwrite-OpenCode-Global-Path"><a href="#2-Upload-Local-Skills-Folder-and-Overwrite-OpenCode-Global-Path" class="headerlink" title="2. Upload Local Skills Folder and Overwrite OpenCode Global Path"></a>2. Upload Local Skills Folder and Overwrite OpenCode Global Path</h2><p>OpenCode reads knowledge bases from <code>~/.config/opencode/skills/&lt;skill-name&gt;/SKILL.md</code>. This step uploads your local <code>skills</code> folder to the server and uses <code>cp -r</code> to fully overwrite the corresponding skill directory.</p>
+<h3 id="2-1-Upload-the-Folder-via-JupyterHub"><a href="#2-1-Upload-the-Folder-via-JupyterHub" class="headerlink" title="2.1 Upload the Folder via JupyterHub"></a>2.1 Upload the Folder via JupyterHub</h3><p>In JupyterHub’s file management interface (the URL typically ends with <code>/tree</code>), drag and drop your local <code>skills</code> folder onto the file list area to upload. Once uploaded, the folder will appear in your home directory on the server (e.g., <code>/home/your-username/skills</code>).</p>
+<h3 id="2-2-Overwrite-to-OpenCode-Skills-Directory"><a href="#2-2-Overwrite-to-OpenCode-Skills-Directory" class="headerlink" title="2.2 Overwrite to OpenCode Skills Directory"></a>2.2 Overwrite to OpenCode Skills Directory</h3><p>Assuming the skill you want to use is named <code>feature-engineering</code>, run the following commands to copy the uploaded <code>skills</code> folder contents to the target location:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf ~/.config/opencode/skills/feature-engineering</span><br><span class="line"><span class="built_in">mkdir</span> -p ~/.config/opencode/skills/feature-engineering</span><br><span class="line"><span class="built_in">cp</span> -r ~/skills/* ~/.config/opencode/skills/feature-engineering/</span><br></pre></td></tr></table></figure>
+
+<p>Verify the core file is in place:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.config/opencode/skills/feature-engineering/SKILL.md</span><br></pre></td></tr></table></figure>
+
+<p>If it outputs your skills content normally, the deployment is complete. When you start OpenCode next time, it will automatically recognize and load the knowledge from that directory.</p>
+<hr>
+<h2 id="3-Running-Two-Tasks-in-Parallel"><a href="#3-Running-Two-Tasks-in-Parallel" class="headerlink" title="3. Running Two Tasks in Parallel"></a>3. Running Two Tasks in Parallel</h2><h3 id="3-1-Open-Two-Terminal-Tabs"><a href="#3-1-Open-Two-Terminal-Tabs" class="headerlink" title="3.1 Open Two Terminal Tabs"></a>3.1 Open Two Terminal Tabs</h3><p>In JupyterHub’s Launcher, click <code>Terminal</code> twice to get two side-by-side terminal tabs.</p>
+<h3 id="3-2-tmux-Session-Lifecycle"><a href="#3-2-tmux-Session-Lifecycle" class="headerlink" title="3.2 tmux Session Lifecycle"></a>3.2 tmux Session Lifecycle</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">stateDiagram-v2</span><br><span class="line">    [*] --&gt; NewSession: tmux new -s explore</span><br><span class="line">    [*] --&gt; NewSession: tmux new -s implement</span><br><span class="line">    NewSession --&gt; Running: opencode starts</span><br><span class="line">    Running --&gt; Background: Ctrl+b, d</span><br><span class="line">    Background --&gt; Reattach: tmux attach -t &lt;name&gt;</span><br><span class="line">    Reattach --&gt; Running: Continue interaction</span><br><span class="line">    Running --&gt; Ended: exit / Task complete</span><br><span class="line">    Background --&gt; Ended: Server reboot</span><br><span class="line">    Ended --&gt; [*]</span><br><span class="line"></span><br><span class="line">    note right of Background</span><br><span class="line">        Close browser, lose network, switch devices</span><br><span class="line">        Tasks are unaffected and keep running</span><br><span class="line">    end note</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-Left-Terminal-Exploration-Task"><a href="#3-3-Left-Terminal-Exploration-Task" class="headerlink" title="3.3 Left Terminal: Exploration Task"></a>3.3 Left Terminal: Exploration Task</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tmux new -s explore</span><br><span class="line">opencode</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-4-Right-Terminal-Implementation-Task"><a href="#3-4-Right-Terminal-Implementation-Task" class="headerlink" title="3.4 Right Terminal: Implementation Task"></a>3.4 Right Terminal: Implementation Task</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">tmux new -s implement</span><br><span class="line">opencode</span><br></pre></td></tr></table></figure>
+
+<p><strong>Detach but keep tasks running</strong>: Press <code>Ctrl+b</code>, then press <code>d</code>.<br><strong>Reattach to check</strong>: In any Terminal, run <code>tmux attach -t explore</code> or <code>tmux attach -t implement</code>.</p>
+<p>For specific task descriptions and interaction methods, complete them within the OpenCode interface. For detailed usage, check the <a href="https://opencode.ai/docs/zh-cn/">OpenCode Official Documentation</a>.</p>
+<hr>
+<h2 id="4-Resource-Monitoring-Third-Terminal-Recommended"><a href="#4-Resource-Monitoring-Third-Terminal-Recommended" class="headerlink" title="4. Resource Monitoring (Third Terminal, Recommended)"></a>4. Resource Monitoring (Third Terminal, Recommended)</h2><p>Open a third Terminal tab and use btop to monitor memory and Swap usage in real time:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install btop -y</span><br><span class="line">btop</span><br></pre></td></tr></table></figure>
+
+<p>Press <code>q</code> to exit monitoring.</p>
+<p>In resource-constrained environments, developing a monitoring habit is especially important. When you notice Swap utilization climbing steadily, it means physical RAM is running low —at that point, consider reducing parallelism and letting one task finish before starting the next.</p>
+<hr>
+<h2 id="5-FAQ"><a href="#5-FAQ" class="headerlink" title="5. FAQ"></a>5. FAQ</h2><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Possible Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>opencode</code> shows command not found</td>
+<td>Installation incomplete or PATH not refreshed</td>
+<td>Reopen Terminal and try again</td>
+</tr>
+<tr>
+<td><code>tmux attach</code> cannot enter session</td>
+<td>Session lost (e.g., server rebooted)</td>
+<td>Run <code>tmux ls</code> to check; if the list is empty, recreate the session</td>
+</tr>
+<tr>
+<td>Tasks run slowly or get interrupted</td>
+<td>Memory pressure</td>
+<td>Confirm Swap is enabled in btop; if Swap is also exhausted, consider reducing parallelism</td>
+</tr>
+<tr>
+<td>Uploaded folder name is not <code>skills</code></td>
+<td>Original name was preserved during upload</td>
+<td>Replace <code>~/skills</code> in subsequent commands with the actual folder name</td>
+</tr>
+<tr>
+<td>JupyterHub Terminal won’t open</td>
+<td>Browser blocked popup</td>
+<td>Allow popups for the site, or manually open in a new tab</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="6-Additional-Notes"><a href="#6-Additional-Notes" class="headerlink" title="6. Additional Notes"></a>6. Additional Notes</h2><ul>
+<li>Two tasks should use different output paths or filenames to avoid overwriting each other.</li>
+<li>The Swap file doesn’t need to be deleted —keep it for future use.</li>
+<li>Even if you close the browser, as long as tmux sessions exist, tasks won’t be interrupted.</li>
+<li>If the server reboots, tmux sessions will be lost and need to be recreated. However, OpenCode’s skills configuration won’t be lost.</li>
+</ul>
+<hr>
+<h2 id="7-Why-This-Works-The-Value-of-This-Approach"><a href="#7-Why-This-Works-The-Value-of-This-Approach" class="headerlink" title="7. Why This Works: The Value of This Approach"></a>7. Why This Works: The Value of This Approach</h2><p>Back to the opening question: why do this in JupyterHub Terminal?</p>
+<p><strong>Terminal is JupyterHub’s hidden superpower.</strong> It requires no extra deployment, no admin approval, no client installation —as long as you have a JupyterHub account, you have a full Linux terminal. It’s a zero-barrier starting point.</p>
+<p><strong>tmux decouples terminal sessions from the browser.</strong> JupyterHub’s Terminal relies on WebSocket connections —once the network drops, the terminal freezes. But tmux keeps processes in the server background, completely decoupled from the frontend connection. You can check progress from your phone via JupyterHub, or close your laptop to grab lunch —come back, <code>tmux attach</code>, and everything is right where you left off.</p>
+<p><strong>OpenCode upgrades Terminal from “command line” to “AI workstation.”</strong> Pure terminal interaction isn’t exactly beginner-friendly, but OpenCode’s TUI interface lowers the interaction complexity. More importantly, through the skills mechanism, you can inject domain knowledge into the AI and have it work according to your specifications and thought processes —this isn’t a generic chatbot, but a dedicated assistant with a “domain brain.”</p>
+<p><strong>Parallelism is an efficiency multiplier.</strong> Exploration and implementation are two different cognitive modes: exploration demands divergent thinking, implementation demands focused execution. Switching between them serially wastes enormous time on context switching. Two tmux sessions each running an OpenCode —one trying things out while the other lands code —nearly doubles overall efficiency. In resource-constrained environments, this time savings is especially precious.</p>
+<p><strong>Zero resource waste.</strong> Terminal + tmux memory usage is negligible, and OpenCode itself is lightweight. Compared to VS Code Server’s typical 1G+ overhead, this setup leaves every megabyte of RAM for your actual tasks. On a 4GB machine, this could be the difference between “runs fine” and “can’t run at all.”</p>
+<p>This approach applies far beyond feature engineering. Hyperparameter tuning, data cleaning, code refactoring, documentation writing —any scenario that can be split into “exploration + implementation” or “Task A + Task B” can reuse the same workflow. If you already have JupyterHub, give that Terminal button a click —it’s more powerful than you think.</p>
+]]></content>
+      <categories>
+        <category>Technical Tutorial</category>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>Tools</tag>
+        <tag>Tutorial</tag>
+        <tag>DevOps</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Gasoline on the Tour Bus</title>
+    <url>/en/2021/08/12/Gasoline-on-the-Tour-Bus/</url>
+    <content><![CDATA[<p>Gasoline on the tour bus, thinking itself a passenger too.</p>
+<p><img src="/en/img/qzone/2021-08-12_1.jpg"></p>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+      </categories>
+      <tags>
+        <tag>Life Essays</tag>
       </tags>
   </entry>
   <entry>
@@ -506,16 +519,34 @@
       </tags>
   </entry>
   <entry>
-    <title>Gasoline on the Tour Bus</title>
-    <url>/en/2021/08/12/Gasoline-on-the-Tour-Bus/</url>
-    <content><![CDATA[<p>Gasoline on the tour bus, thinking itself a passenger too.</p>
-<p><img src="/en/img/qzone/2021-08-12_1.jpg"></p>
+    <title>Surprise! Heard My Favorite Band toe&#39;s Song at Rehearsal</title>
+    <url>/en/2024/10/12/Goodbye-on-the-Field/</url>
+    <content><![CDATA[<p>Walking past the sports field, I suddenly heard the intro to goodbye[^1]</p>
+<p>From vaguely familiar to instantly dizzy with surprise</p>
+<p>In a melody only we know</p>
+<p>That sense of belonging, tears almost coming out</p>
+<p>The best part of this song is the drums, the drummer pouring everything in, riding the rhythm with swagger, launching tidal waves of beats</p>
+<p>“When a Drummer Enters Their Flow State”?live is the peak</p>
+<p><video controls style="max-width:100%;" preload="metadata"><source src="/img/qzone/2024-10-12_v1.mp4" type="video/mp4">Your browser does not support video playback</video></p>
+<hr>
+<p>** Comments**</p>
+<ul>
+<li><strong>LoulanRE</strong>[^2] (2024-10-12 19:35): You can’t hear the drummer’s brilliant performance here because the rest is all my awful singing along, better not post it</li>
+<li><strong>Zheli Shi id</strong> (2024-10-12 20:08): Classic guitar 53231323[^3]</li>
+<li><strong>LoulanRE</strong> reply @Zheli Shi id (2024-10-12 21:19): You’re the guitar god</li>
+<li><strong>Zheli Shi id</strong> reply @LoulanRE (2024-10-12 21:19): God my ass, enough already</li>
+<li><strong>LoulanRE</strong> reply @Zheli Shi id (2024-10-12 21:20): I’m going to mold your taste into my shape, and then you’ll play it for me</li>
+<li><strong>funoru</strong> (2024-10-12 20:48): Damn, hearing your favorite song for real, who could resist humming along</li>
+<li><strong>LoulanRE</strong> reply @funoru (2024-10-12 21:21): For real</li>
+</ul>
+<p>[^1]: “goodbye” is a song by the Japanese post-rock band toe.<br>[^2]: LoulanRE (RE) is the author’s username.<br>[^3]: 53231323 is the most classic beginner guitar fingerpicking pattern in China, referring to the sequence of strings plucked (5th-3rd-2nd-3rd-1st-3rd-2nd-3rd string).</p>
 ]]></content>
       <categories>
         <category>Life Essays</category>
       </categories>
       <tags>
-        <tag>Life Essays</tag>
+        <tag>Music</tag>
+        <tag>Live</tag>
       </tags>
   </entry>
   <entry>
@@ -554,7 +585,7 @@
 </li>
 <li><strong>Zhang</strong> (2024-11-03 09:45): What a legend</li>
 </ul>
-<p>[^playdead]: “Playing dead” (躺尸) —literally “lying like a corpse” —is Chinese internet slang for doing absolutely nothing, vanishing without contributing. Much stronger than “slacking,” it implies complete non-existence in group work.<br>[^tilting]: “Tilting” (红温) —literally “red-temperature” —is Chinese gaming slang for becoming so furious your face turns red and heats up. Equivalent to being “tilted” or “losing your cool” in English gaming culture.<br>[^selfstudy]: <strong>Evening self-study</strong> (晚自习 is a mandatory supervised study period common in Chinese universities and high schools, typically running from 7–10 PM. Attendance may be tracked.<br>[^beast]: “Beast of burden” (牛马) —literally “oxen and horses” —is Chinese internet slang for someone who is exploited and overworked, akin to “wage slave” or “drudge.”<br>[^indulgences]: <strong>Indulgences</strong> (赎罪券 —here used humorously, borrowing the Catholic concept of selling indulgences to atone for sins. In the group project context, it means paying money to opt out of labor.<br>[^xuexitong]: <strong>Xuexitong</strong> (学习通 is a widely used Chinese online learning platform, often associated with its plagiarism detection system that many universities require for submitting assignments.</p>
+<p>[^playdead]: “Playing dead” (躺尸) —literally “lying like a corpse” —is Chinese internet slang for doing absolutely nothing, vanishing without contributing. Much stronger than “slacking,” it implies complete non-existence in group work.<br>[^tilting]: “Tilting” (红温) —literally “red-temperature” —is Chinese gaming slang for becoming so furious your face turns red and heats up. Equivalent to being “tilted” or “losing your cool” in English gaming culture.<br>[^selfstudy]: <strong>Evening self-study</strong> (晚自习) is a mandatory supervised study period common in Chinese universities and high schools, typically running from 7–10 PM. Attendance may be tracked.<br>[^beast]: “Beast of burden” (牛马) —literally “oxen and horses” —is Chinese internet slang for someone who is exploited and overworked, akin to “wage slave” or “drudge.”<br>[^indulgences]: <strong>Indulgences</strong> (赎罪券) —here used humorously, borrowing the Catholic concept of selling indulgences to atone for sins. In the group project context, it means paying money to opt out of labor.<br>[^xuexitong]: <strong>Xuexitong</strong> (学习通) is a widely used Chinese online learning platform, often associated with its plagiarism detection system that many universities require for submitting assignments.</p>
 ]]></content>
       <categories>
         <category>Life Essays</category>
@@ -562,37 +593,6 @@
       <tags>
         <tag>Group Project</tag>
         <tag>Rant</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Surprise! Heard My Favorite Band toe&#39;s Song at Rehearsal</title>
-    <url>/en/2024/10/12/Goodbye-on-the-Field/</url>
-    <content><![CDATA[<p>Walking past the sports field, I suddenly heard the intro to goodbye[^1]</p>
-<p>From vaguely familiar to instantly dizzy with surprise</p>
-<p>In a melody only we know</p>
-<p>That sense of belonging, tears almost coming out</p>
-<p>The best part of this song is the drums, the drummer pouring everything in, riding the rhythm with swagger, launching tidal waves of beats</p>
-<p>“When a Drummer Enters Their Flow State”?live is the peak</p>
-<p><video controls style="max-width:100%;" preload="metadata"><source src="/img/qzone/2024-10-12_v1.mp4" type="video/mp4">Your browser does not support video playback</video></p>
-<hr>
-<p>** Comments**</p>
-<ul>
-<li><strong>LoulanRE</strong>[^2] (2024-10-12 19:35): You can’t hear the drummer’s brilliant performance here because the rest is all my awful singing along, better not post it</li>
-<li><strong>Zheli Shi id</strong> (2024-10-12 20:08): Classic guitar 53231323[^3]</li>
-<li><strong>LoulanRE</strong> reply @Zheli Shi id (2024-10-12 21:19): You’re the guitar god</li>
-<li><strong>Zheli Shi id</strong> reply @LoulanRE (2024-10-12 21:19): God my ass, enough already</li>
-<li><strong>LoulanRE</strong> reply @Zheli Shi id (2024-10-12 21:20): I’m going to mold your taste into my shape, and then you’ll play it for me</li>
-<li><strong>funoru</strong> (2024-10-12 20:48): Damn, hearing your favorite song for real, who could resist humming along</li>
-<li><strong>LoulanRE</strong> reply @funoru (2024-10-12 21:21): For real</li>
-</ul>
-<p>[^1]: “goodbye” is a song by the Japanese post-rock band toe.<br>[^2]: LoulanRE (RE) is the author’s username.<br>[^3]: 53231323 is the most classic beginner guitar fingerpicking pattern in China, referring to the sequence of strings plucked (5th-3rd-2nd-3rd-1st-3rd-2nd-3rd string).</p>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-      </categories>
-      <tags>
-        <tag>Music</tag>
-        <tag>Live</tag>
       </tags>
   </entry>
   <entry>
@@ -625,29 +625,6 @@
       <tags>
         <tag>Chengdu</tag>
         <tag>Travel</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Lenin&#39;s 150th Birthday</title>
-    <url>/en/2020/04/22/Lenin-150th-Birthday/</url>
-    <content><![CDATA[<p>To the forever great revolutionary teacher, Lenin’s 150th birthday! The red flag shall continue to fly, The Internationale shall ultimately resound across the earth, and every thunderclap shall be a salute to the revolutionaries of the old world!</p>
-<p>“I want people to know that in that pathetic era of idealism, a group of Communist Youth League members came to the depths of the Siberian forests, chasing a phantom there, and devoted their entire lives to it.”?Liu Cixin, <em>Ball Lightning</em></p>
-<p><img src="/en/img/qzone/2020-04-22_1.jpg"></p>
-<p><img src="/en/img/qzone/2020-04-22_2.jpg"></p>
-<p><img src="/en/img/qzone/2020-04-22_3.jpg"></p>
-<p><img src="/en/img/qzone/2020-04-22_4.jpg"></p>
-<hr>
-<p>** Comments**</p>
-<ul>
-<li><strong>Long</strong> (2020-04-22 07:13): Salute!!!</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-      </categories>
-      <tags>
-        <tag>History</tag>
-        <tag>Politics</tag>
       </tags>
   </entry>
   <entry>
@@ -823,7 +800,7 @@
 <li><strong>Sapphire</strong> (2025-03-06 09:25): Hahahahahahahahahaha</li>
 <li><strong>Dawn</strong> (2025-03-06 22:28): Haji Dan, you bastard, even on your birthday you can spare energy to take on the counselor</li>
 </ul>
-<p>[^counselor]: A <strong>counselor</strong> (辅导员 <em>fǔdǎo yuán</em>) is a unique role in Chinese universities —part advisor, part administrator, part disciplinarian. They manage everything from attendance and mental health to political education and dorm inspections. Far more powerful than a Western “academic advisor.”<br>[^finalboss]: “Direct showdown with the Boss” (与主对决) is Chinese internet slang for confronting the authority figure you’ve been dreading —like a student facing the teacher after skipping class. The “Boss” (涓? humorously elevates the counselor to a video game final boss.</p>
+<p>[^counselor]: A <strong>counselor</strong> (辅导员 <em>fǔdǎo yuán</em>) is a unique role in Chinese universities —part advisor, part administrator, part disciplinarian. They manage everything from attendance and mental health to political education and dorm inspections. Far more powerful than a Western “academic advisor.”<br>[^finalboss]: “Direct showdown with the Boss” (与主对决) is Chinese internet slang for confronting the authority figure you’ve been dreading —like a student facing the teacher after skipping class. The “Boss” (主) humorously elevates the counselor to a video game final boss.</p>
 ]]></content>
       <categories>
         <category>Life Essays</category>
@@ -831,42 +808,6 @@
       <tags>
         <tag>Campus</tag>
         <tag>Fun</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Midterm Exam Pain Biweek</title>
-    <url>/en/2025/11/30/Midterm-Pain-Biweek/</url>
-    <content><![CDATA[<p>Midterm Pain Biweek</p>
-<p>God, are you kidding me? Isn’t my first-level discipline[^1] computer science? Why am I in the Automation College studying Signals and Systems? It’s so damn hard</p>
-<p>Learning Rust that my own department doesn’t teach, Signals and Systems that the CS College doesn’t teach, Machine Learning that the Communications department doesn’t teach — the hilarious curriculum[^2] of a hybrid’s identity anxiety and crisis of belonging. At least I laughed myself angry</p>
-<p>But I’m a creep, I’m a weirdo<br>What the hell am I doing here?<br>What the hell am I doing here,<br>I don’t belong here.<br>I don’t belong here</p>
-<img src="/img/qzone/2025-11-30_1.jpg" alt="" class="img-very-tall">
-![](/img/qzone/2025-11-30_2.png)
-![](/img/qzone/2025-11-30_3.jpg)
-
-<hr>
-<p><strong>💬 Comments</strong></p>
-<ul>
-<li><strong>Wuxing</strong> (2025-11-30 00:59): The ultimate polymath of engineering<ul>
-<li><strong>LoulanRE</strong> reply @Wuxing (2025-11-30 01:12): You’re right, so after confirming I probably won’t be the chief engineer of a major project, my attitude toward every course has been “wtf is this class even useful for”</li>
-</ul>
-</li>
-<li><strong>Wuxing</strong> (2025-11-30 01:00): Still got real skills though<ul>
-<li><strong>LoulanRE</strong> reply @Wuxing (2025-11-30 01:15): But dialectically and optimistically speaking, maybe this jack-of-all-trades generalist type could actually be quite fitting in the future — grasp the big picture and all aspects, let AI do the tedious and heavy lifting as the workhorse</li>
-<li><strong>Wuxing</strong> reply @LoulanRE (2025-11-30 01:16): Yeah exactly bro, interdisciplinary talent is invincible</li>
-</ul>
-</li>
-<li><strong>Saya</strong> (2025-12-01 16:27): Seeing everyone else also studying Signals B makes me feel better</li>
-</ul>
-<p>[^1]: First-level discipline (一级学科) — the top-level classification in China’s higher education discipline system. A student’s “first-level discipline” determines their official academic track, but cross-disciplinary curricula can place them in departments that don’t align with their primary classification.<br>[^2]: Curriculum&#x2F;training program (培养方案) — the structured course plan prescribed by Chinese universities for each major, which can sometimes result in unusual combinations of required courses across departmental boundaries.</p>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-      </categories>
-      <tags>
-        <tag>Midterm</tag>
-        <tag>Academics</tag>
-        <tag>Identity Crisis</tag>
       </tags>
   </entry>
   <entry>
@@ -1015,6 +956,65 @@
       </tags>
   </entry>
   <entry>
+    <title>Lenin&#39;s 150th Birthday</title>
+    <url>/en/2020/04/22/Lenin-150th-Birthday/</url>
+    <content><![CDATA[<p>To the forever great revolutionary teacher, Lenin’s 150th birthday! The red flag shall continue to fly, The Internationale shall ultimately resound across the earth, and every thunderclap shall be a salute to the revolutionaries of the old world!</p>
+<p>“I want people to know that in that pathetic era of idealism, a group of Communist Youth League members came to the depths of the Siberian forests, chasing a phantom there, and devoted their entire lives to it.”?Liu Cixin, <em>Ball Lightning</em></p>
+<p><img src="/en/img/qzone/2020-04-22_1.jpg"></p>
+<p><img src="/en/img/qzone/2020-04-22_2.jpg"></p>
+<p><img src="/en/img/qzone/2020-04-22_3.jpg"></p>
+<p><img src="/en/img/qzone/2020-04-22_4.jpg"></p>
+<hr>
+<p>** Comments**</p>
+<ul>
+<li><strong>Long</strong> (2020-04-22 07:13): Salute!!!</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+      </categories>
+      <tags>
+        <tag>History</tag>
+        <tag>Politics</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Midterm Exam Pain Biweek</title>
+    <url>/en/2025/11/30/Midterm-Pain-Biweek/</url>
+    <content><![CDATA[<p>Midterm Pain Biweek</p>
+<p>God, are you kidding me? Isn’t my first-level discipline[^1] computer science? Why am I in the Automation College studying Signals and Systems? It’s so damn hard</p>
+<p>Learning Rust that my own department doesn’t teach, Signals and Systems that the CS College doesn’t teach, Machine Learning that the Communications department doesn’t teach — the hilarious curriculum[^2] of a hybrid’s identity anxiety and crisis of belonging. At least I laughed myself angry</p>
+<p>But I’m a creep, I’m a weirdo<br>What the hell am I doing here?<br>What the hell am I doing here,<br>I don’t belong here.<br>I don’t belong here</p>
+<img src="/img/qzone/2025-11-30_1.jpg" alt="" class="img-very-tall">
+![](/img/qzone/2025-11-30_2.png)
+![](/img/qzone/2025-11-30_3.jpg)
+
+<hr>
+<p><strong>💬 Comments</strong></p>
+<ul>
+<li><strong>Wuxing</strong> (2025-11-30 00:59): The ultimate polymath of engineering<ul>
+<li><strong>LoulanRE</strong> reply @Wuxing (2025-11-30 01:12): You’re right, so after confirming I probably won’t be the chief engineer of a major project, my attitude toward every course has been “wtf is this class even useful for”</li>
+</ul>
+</li>
+<li><strong>Wuxing</strong> (2025-11-30 01:00): Still got real skills though<ul>
+<li><strong>LoulanRE</strong> reply @Wuxing (2025-11-30 01:15): But dialectically and optimistically speaking, maybe this jack-of-all-trades generalist type could actually be quite fitting in the future — grasp the big picture and all aspects, let AI do the tedious and heavy lifting as the workhorse</li>
+<li><strong>Wuxing</strong> reply @LoulanRE (2025-11-30 01:16): Yeah exactly bro, interdisciplinary talent is invincible</li>
+</ul>
+</li>
+<li><strong>Saya</strong> (2025-12-01 16:27): Seeing everyone else also studying Signals B makes me feel better</li>
+</ul>
+<p>[^1]: First-level discipline (一级学科) — the top-level classification in China’s higher education discipline system. A student’s “first-level discipline” determines their official academic track, but cross-disciplinary curricula can place them in departments that don’t align with their primary classification.<br>[^2]: Curriculum&#x2F;training program (培养方案) — the structured course plan prescribed by Chinese universities for each major, which can sometimes result in unusual combinations of required courses across departmental boundaries.</p>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+      </categories>
+      <tags>
+        <tag>Midterm</tag>
+        <tag>Academics</tag>
+        <tag>Identity Crisis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Astronomy Club</title>
     <url>/en/2024/10/17/Moon-at-Astronomy-Club/</url>
     <content><![CDATA[<p>Skipped evening self-study[^selfstudy] to go photograph the moon at the astronomy club</p>
@@ -1037,7 +1037,7 @@
 <li><strong>funoru</strong> (2024-10-17 23:34): Astronomy club</li>
 <li><strong>Chen</strong> (2024-10-18 06:33): A freedom I envy</li>
 </ul>
-<p>[^selfstudy]: <strong>Evening self-study</strong> (晚自习 is a mandatory supervised study period common in Chinese universities and high schools, typically running from 7–10 PM. Attendance may be tracked.<br>[^skipping]: <strong>Skipping class</strong> (翇课) is a small act of rebellion in Chinese universities, where attendance is often strictly monitored and can affect your grade —making it far riskier than in Western universities.</p>
+<p>[^selfstudy]: <strong>Evening self-study</strong> (晚自习) is a mandatory supervised study period common in Chinese universities and high schools, typically running from 7–10 PM. Attendance may be tracked.<br>[^skipping]: <strong>Skipping class</strong> (翘课) is a small act of rebellion in Chinese universities, where attendance is often strictly monitored and can affect your grade —making it far riskier than in Western universities.</p>
 ]]></content>
       <categories>
         <category>Life Essays</category>
@@ -1096,43 +1096,6 @@
       </tags>
   </entry>
   <entry>
-    <title>18th Birthday Coming-of-Age</title>
-    <url>/en/2024/03/02/Never-Follow-the-World-Down/</url>
-    <content><![CDATA[<p>Never again —follow the world as it sinks</p>
-<p>At eighteen, you tell yourself</p>
-<p>“Pathfinder” unfulfilled (We Three)[^1]</p>
-<img src="/img/qzone/2024-03-02_1.jpg" alt="" class="img-enlarge">
-
-<hr>
-<p><strong>💬 Comments</strong></p>
-<ul>
-<li><strong>sarff</strong> (2024-03-02 17:07): Seriously awesome</li>
-</ul>
-<p>[^1]: “Pathfinder” (寻路人) is a song by We Three (我们三个), a Chinese indie band. “Unfulfilled” (未遂) suggests the aspiration remained unrealized.</p>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-      </categories>
-      <tags>
-        <tag>Music</tag>
-        <tag>Coming of Age</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ave Mujica (Pseudo) Finale Thoughts</title>
-    <url>/en/2025/03/27/MyGO-Sequel-Announcement/</url>
-    <content><![CDATA[<p>So many feelings —the plot was a mess, but those last two episodes were so damn good<br>Lingering on, echoing with regret<br>[MyGO Mujica fan theories and wild speculation[^1] —it’s rare to find a work this fiercely discussed<br>Just a shame —“never again did I taste beans as good as that night, never again did I see a show as fine as that one”[^2]]<br>Just as I was having these feelings, about to make peace with it all —There’s actually a sequel!!! I screamed the instant I found out<br>Gasping in sheer excitement, hands pressed against my chest, just wanting to calm down and thank the heavens<br><img src="/en/img/qzone/2025-03-27_1.jpg"><br><img src="/en/img/qzone/2025-03-27_2.jpg"><br><img src="/en/img/qzone/2025-03-27_3.jpg"><br><img src="/en/img/qzone/2025-03-27_4.jpg"><br><img src="/en/img/qzone/2025-03-27_5.jpg"><br><img src="/en/img/qzone/2025-03-27_6.jpg"></p>
-<p>[^1]: “Fake medicine” (假药) is Chinese ACG fandom slang for fan-made theories and speculation that turn out to be false —essentially “wild fan theories” or “copium.”<br>[^2]: A famous quote from Lu Xun’s essay “Village Opera” (社戏), expressing nostalgic longing for a fleeting, irreplaceable experience.</p>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-      </categories>
-      <tags>
-        <tag>MyGO</tag>
-        <tag>Anime</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MyGO Collab Store Blitz</title>
     <url>/en/2024/12/22/MyGO-Collab-Store-Blitz/</url>
     <content><![CDATA[<p>Went to the Lawson[^1] MyGO!!!!! x Ave Mujica collab store[^2]<br>I figured the event spots would’ve been gone by this point<br>Just planning to drop by and take a look<br>When the clerk said there were still spots left, several people around me all went “Wait, there are still spots?!”<br>The synchronization rate was hilariously good<br>Right away someone brought up the news about the Shanghai collab store shutting down over queuing and scalping[^3] disputes, and the fridge magnet point-collection[^4] event being completely cleared out on day one<br>It’s exactly in places like this —the vibe of being surrounded by fellow fans is so fun<br>I already knew all of this. I even forgot about the point collection until the first night, checked the official site and saw only 100-something left out of 4000, dashed out the door and blitzed to the Lawson at the school gate. I was so happy when I got it<br>Feel like my brain juice is about to burst out, so satisfying aaaaaah</p>
@@ -1157,6 +1120,20 @@
       </tags>
   </entry>
   <entry>
+    <title>Ave Mujica (Pseudo) Finale Thoughts</title>
+    <url>/en/2025/03/27/MyGO-Sequel-Announcement/</url>
+    <content><![CDATA[<p>So many feelings —the plot was a mess, but those last two episodes were so damn good<br>Lingering on, echoing with regret<br>[MyGO Mujica fan theories and wild speculation[^1] —it’s rare to find a work this fiercely discussed<br>Just a shame —“never again did I taste beans as good as that night, never again did I see a show as fine as that one”[^2]]<br>Just as I was having these feelings, about to make peace with it all —There’s actually a sequel!!! I screamed the instant I found out<br>Gasping in sheer excitement, hands pressed against my chest, just wanting to calm down and thank the heavens<br><img src="/en/img/qzone/2025-03-27_1.jpg"><br><img src="/en/img/qzone/2025-03-27_2.jpg"><br><img src="/en/img/qzone/2025-03-27_3.jpg"><br><img src="/en/img/qzone/2025-03-27_4.jpg"><br><img src="/en/img/qzone/2025-03-27_5.jpg"><br><img src="/en/img/qzone/2025-03-27_6.jpg"></p>
+<p>[^1]: “Fake medicine” (假药) is Chinese ACG fandom slang for fan-made theories and speculation that turn out to be false —essentially “wild fan theories” or “copium.”<br>[^2]: A famous quote from Lu Xun’s essay “Village Opera” (社戏), expressing nostalgic longing for a fleeting, irreplaceable experience.</p>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+      </categories>
+      <tags>
+        <tag>MyGO</tag>
+        <tag>Anime</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>&#39;Hearts of Iron IV: No Step Back&#39;</title>
     <url>/en/2022/01/01/No-Step-Back-New-Year-Power/</url>
     <content><![CDATA[<p>The new Hearts of Iron IV DLC <em>No Step Back</em> dropped, and while I was firing up a Soviet playthrough to check out the new focus tree and decisions, I suddenly noticed the text under the difficulty selection — those few passages, resonant and full of power, paired with the New Year, really did feel like “a new year, a new beginning.”It’s exactly the moment to set out again, traveling light. Perhaps we all need a little momentum to carry us forward sometimes, to face the tense and exhausting days of our lives.</p>
@@ -1178,6 +1155,29 @@
       </tags>
   </entry>
   <entry>
+    <title>18th Birthday Coming-of-Age</title>
+    <url>/en/2024/03/02/Never-Follow-the-World-Down/</url>
+    <content><![CDATA[<p>Never again —follow the world as it sinks</p>
+<p>At eighteen, you tell yourself</p>
+<p>“Pathfinder” unfulfilled (We Three)[^1]</p>
+<img src="/img/qzone/2024-03-02_1.jpg" alt="" class="img-enlarge">
+
+<hr>
+<p><strong>💬 Comments</strong></p>
+<ul>
+<li><strong>sarff</strong> (2024-03-02 17:07): Seriously awesome</li>
+</ul>
+<p>[^1]: “Pathfinder” (寻路人) is a song by We Three (我们三个), a Chinese indie band. “Unfulfilled” (未遂) suggests the aspiration remained unrealized.</p>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+      </categories>
+      <tags>
+        <tag>Music</tag>
+        <tag>Coming of Age</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>First Day of Shanghai Business Trip</title>
     <url>/en/2025/07/12/Northeast-Southwest-Victorious-Reunion/</url>
     <content><![CDATA[<p>Northeast–Southwest Victorious Reunion[^1]</p>
@@ -1185,7 +1185,7 @@
 <p>An ancient battlefield brimming with countless stories</p>
 <p>Spiritual and physical satisfaction in equal measure</p>
 <p><img src="/en/img/qzone/2025-07-12_1.jpg"><br><img src="/img/qzone/2025-07-12_2.jpg" alt="" class="img-tall"><br><img src="/img/qzone/2025-07-12_3.jpg" alt="" class="img-tall"><br><img src="/img/qzone/2025-07-12_4.jpg" alt="" class="img-tall"><br><img src="/img/qzone/2025-07-12_5.jpg" alt="" class="img-tall"><br><img src="/img/qzone/2025-07-12_6.jpg" alt="" class="img-tall"><br><img src="/img/qzone/2025-07-12_7.jpg" alt="" class="img-tall"><br><img src="/en/img/qzone/2025-07-12_8.jpg"><br><img src="/img/qzone/2025-07-12_9.jpg" alt="" class="img-tall"></p>
-<p>[^1]: “Victorious Reunion” (胜利会师) —a term from Chinese revolutionary history referring to the merging of different Red Army units after long marches. Used here humorously to describe friends from northeast and southwest China finally meeting up.<br>[^2]: Saizeriya (サイゼリヤ —a Japanese chain of Italian-style family restaurants, legendary in China for its extremely low prices. It’s the go-to spot for students and young adults —essentially the meme-tier budget dining institution of Chinese college life.<br>[^3]: Light novel (轻小说 —a Japanese publishing format targeting young adults, typically featuring anime-style illustrations and serialized storytelling. Many popular anime are adapted from light novels.</p>
+<p>[^1]: “Victorious Reunion” (胜利会师) —a term from Chinese revolutionary history referring to the merging of different Red Army units after long marches. Used here humorously to describe friends from northeast and southwest China finally meeting up.<br>[^2]: Saizeriya (サイゼリヤ) —a Japanese chain of Italian-style family restaurants, legendary in China for its extremely low prices. It’s the go-to spot for students and young adults —essentially the meme-tier budget dining institution of Chinese college life.<br>[^3]: Light novel (轻小说) —a Japanese publishing format targeting young adults, typically featuring anime-style illustrations and serialized storytelling. Many popular anime are adapted from light novels.</p>
 ]]></content>
       <categories>
         <category>Life Essays</category>
@@ -1236,7 +1236,7 @@
 </ul>
 <hr>
 <p><strong>Footnotes</strong></p>
-<p>[^1]: “Old gentleman” (大爷) —A casual, affectionate term of address for older men in everyday Chinese, roughly equivalent to “uncle” or “older gentleman.” It carries warmth and informality.<br>[^2]: May Day shift adjustments (五一调休) —China’s holiday scheduling system where makeup workdays are arranged around public holidays (such as the May 1st Labor Day) to create longer continuous breaks. This means people often must work on adjacent weekends to compensate, which can affect overall attendance and activity levels during the holiday period.<br>[^3]: “What night lacks moonlight? What place lacks bamboo and cypress? But few are the idlers like the two of us.” (何夜无月？何处无竹柏？但少闲人如吾两人者耳。 —From the Song dynasty poet Su Shi’s <em>Record of a Night Stroll at Chengtian Temple</em> (记承天寺夜游). Written during Su Shi’s exile, this brief essay captures a spontaneous midnight walk with a friend under the moonlight, finding beauty and solace in shared leisure amid adversity.</p>
+<p>[^1]: “Old gentleman” (大爷) —A casual, affectionate term of address for older men in everyday Chinese, roughly equivalent to “uncle” or “older gentleman.” It carries warmth and informality.<br>[^2]: May Day shift adjustments (五一调休) —China’s holiday scheduling system where makeup workdays are arranged around public holidays (such as the May 1st Labor Day) to create longer continuous breaks. This means people often must work on adjacent weekends to compensate, which can affect overall attendance and activity levels during the holiday period.<br>[^3]: “What night lacks moonlight? What place lacks bamboo and cypress? But few are the idlers like the two of us.” (何夜无月？何处无竹柏？但少闲人如吾两人者耳。) —From the Song dynasty poet Su Shi’s <em>Record of a Night Stroll at Chengtian Temple</em> (记承天寺夜游). Written during Su Shi’s exile, this brief essay captures a spontaneous midnight walk with a friend under the moonlight, finding beauty and solace in shared leisure amid adversity.</p>
 ]]></content>
       <categories>
         <category>Life Essays</category>
@@ -1296,7 +1296,7 @@
 </ul>
 <hr>
 <p><strong>Footnotes</strong></p>
-<p>[^1]: “Humanities track” (文科) —In China’s high school streaming system, students are divided into a sciences track (理科) and a humanities&#x2F;liberal arts track (文科), typically around 10th grade.<br>[^2]: Renmin University (人大) —Renmin University of China, one of China’s most prestigious universities, particularly renowned for humanities and social sciences.<br>[^3]: Qzone (绌洪棿) —QQ Zone, a social networking platform within Tencent’s QQ ecosystem, widely used in China for blogging and sharing updates, especially popular among the millennial generation.<br>[^4]: Homeroom teacher (班主任 —In Chinese schools, the homeroom teacher holds far more authority than in Western schools —responsible for discipline, moral education, and overall student welfare, essentially acting as the primary authority figure for a class.<br>[^5]: “Early love” (早恋) —Literally “early love,” a pejorative term used in Chinese education to refer to romantic relationships among middle and high school students, which are generally discouraged or prohibited by schools and parents.</p>
+<p>[^1]: “Humanities track” (文科) —In China’s high school streaming system, students are divided into a sciences track (理科) and a humanities&#x2F;liberal arts track (文科), typically around 10th grade.<br>[^2]: Renmin University (人大) —Renmin University of China, one of China’s most prestigious universities, particularly renowned for humanities and social sciences.<br>[^3]: Qzone (空间) —QQ Zone, a social networking platform within Tencent’s QQ ecosystem, widely used in China for blogging and sharing updates, especially popular among the millennial generation.<br>[^4]: Homeroom teacher (班主任) —In Chinese schools, the homeroom teacher holds far more authority than in Western schools —responsible for discipline, moral education, and overall student welfare, essentially acting as the primary authority figure for a class.<br>[^5]: “Early love” (早恋) —Literally “early love,” a pejorative term used in Chinese education to refer to romantic relationships among middle and high school students, which are generally discouraged or prohibited by schools and parents.</p>
 ]]></content>
       <categories>
         <category>Life Essays</category>
@@ -1485,119 +1485,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Summer Outing With Friends</title>
-    <url>/en/2025/07/27/Team-Building-Dueling-Caravan/</url>
-    <content><![CDATA[<p>All my fellas</p>
-<img src="/img/qzone/2025-07-27_1.jpg" alt="" class="img-tall">
-
-<p><img src="/en/img/qzone/2025-07-27_2.jpg"></p>
-<p><img src="/en/img/qzone/2025-07-27_3.jpg"></p>
-<img src="/img/qzone/2025-07-27_4.jpg" alt="" class="img-tall">
-
-<p><img src="/en/img/qzone/2025-07-27_5.jpg"></p>
-<img src="/img/qzone/2025-07-27_6.jpg" alt="" class="img-tall">
-
-<img src="/img/qzone/2025-07-27_7.jpg" alt="" class="img-tall">
-
-<img src="/img/qzone/2025-07-27_8.jpg" alt="" class="img-tall">
-
-<p><img src="/en/img/qzone/2025-07-27_9.jpg"></p>
-<hr>
-<p>** Comments**</p>
-<ul>
-<li><strong>Chaldea Black Saber Master</strong> (2025-07-27 23:39): And the succubus yg</li>
-<li><strong>LoulanRE</strong> reply @Chaldea Black Saber Master (2025-07-27 23:53): In Chongqing that might be quite popular</li>
-<li><strong>Feng Juanlian Zhe Huaxiang</strong> reply @Chaldea Black Saber Master (2025-07-28 00:32): Sorry</li>
-<li><strong>Ji</strong> (2025-07-28 10:04): Passing away and all that</li>
-<li><strong>Luochan</strong> (2025-07-28 12:18): How’s the Ronin Black Egg</li>
-<li><strong>Wuxing</strong> reply @Luochan (2025-07-28 13:32): Ghost fire CS</li>
-<li><strong>Wuxing</strong> reply @Luochan (2025-07-28 13:33): Your head looks way too much like those ghost fire riders</li>
-<li><strong>Luochan</strong> reply @Wuxing (2025-10-08 20:05): Feels a lot like the cowherd boy</li>
-<li><strong>Wuxing</strong> reply @Luochan (2025-10-08 20:06): Carved from the same mold as my son</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-      </categories>
-      <tags>
-        <tag>Team Building</tag>
-        <tag>Social</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>The Story of Becoming a HIFI Enthusiast</title>
-    <url>/en/2026/06/01/The-Story-of-Becoming-a-HIFI-Enthusiast/</url>
-    <content><![CDATA[<p>The reason I wanted to write this is honestly just that a moment of regretful tears earlier this year sparked a passion for buying HIFI gear, and then my experiences visiting the Chengdu HIFI exhibition and the feelings after purchasing equipment</p>
-<p>But I feel like I have so many stories and connections with music, and it’s rare to pick up the pen and reminisce, so let me start from the beginning</p>
-<hr>
-<h2 id="How-It-All-Began"><a href="#How-It-All-Began" class="headerlink" title="How It All Began"></a>How It All Began</h2><p> The furthest back I can trace things is probably that I was lucky enough to pretty much have my own computer, you could say all the stories to come started from here</p>
-<p> In Guanyin Mountain in Xiamen, a place on the island super close to the sea, our family used to run a delivery shop there</p>
-<p> About one or two bus stops to the right was the beach. There was a daily sea breeze, though there were also quite a few office buildings nearby. When I was in early elementary school, I’d help out, I’ve driven a tricycle, gone into office buildings to deliver packages</p>
-<p> To the left was Software Park Phase III. When my dad drove me to school in the mornings, I’d often count the number of companies I saw along the way, and I was even proud enough to declare that because I was close to 4399[^4399] here, I could play the newest games</p>
-<p> I’ll add some photos when I go back to Xiamen in the summer</p>
-<p> But let me get back on topic. Because I had a computer, I’d often use it to listen to music, and consciously treated it as a form of entertainment. Even with those cheap accessory-level little speakers, I could still have a great time</p>
-<p> Something I still remember vividly is that even during lunch, I’d actively switch songs, wanting to show my dad my taste</p>
-<p> But when you’re a kid, it’s really hard to have your own style, you basically just listen to whatever’s popular. Jay Chou, JJ Lin[^jaychou], the EDM and traditional Chinese-style music that were hot at the time</p>
-<p> Every post-00s kid has that memory, right, That era when the internet was dominated by Alan Walker, now it’s become a symbol of “Jiahao”[^jiahao] vibes. Sigh, time… oh, the innocence of the early internet days</p>
-<p> But back then I never really had a specific preference, maybe just a fondness for certain songs. It was picking the tallest among the short, hardly something you’d call being moved. To say something a bit controversial, I even feel like phonk is a continuation of the Jiahao lineage. Anyway, I just can’t get into that style</p>
-<hr>
-<h2 id="The-First-Tears-of-Regret"><a href="#The-First-Tears-of-Regret" class="headerlink" title="The First Tears of Regret"></a>The First Tears of Regret</h2><p>The earliest tears of regret I can still remember now were from listening on our family’s OPPO phone</p>
-<p>It must’ve been late elementary school. I only found out recently that OPPO actually had a music phone lineup, their DAC and amp chips aren’t bad even by today’s standards[^oppo]</p>
-<p>I keep using my school year as a time marker, if you want to know roughly when, I was born in 2006</p>
-<p>The device was the EarPods-style earbuds that came bundled with the phone</p>
-<p>They looked something like the picture below. Back then it seemed really popular to include this kind of accessory</p>
-<p><img src="/en/img/Pasted-image-20260520232106.png" alt="Pasted-image-20260520232106"></p>
-<p>The song was <strong>Star</strong> - [Eric Chen](<a href="https://music.163.com/artist">https://music.163.com/artist</a>, id&#x3D;12605661)[^netease]</p>
-<ul>
-<li></li>
-</ul>
-<p>Ever since I got into HIFI, I’ve kept hearing about the concept of <strong>psychoacoustics</strong>. Even with better gear now, it’s hard to recapture that flow state from the first time I heard it</p>
-<p>But I can still remember, and I can still feel it now</p>
-<p>A pure and expansive backdrop, faint yet resolute, crisply striking at the heartstrings. The music as a whole brings a greater overview effect</p>
-<p>Light leaks in through <strong>the cracks</strong>. My mind is <strong>clearer than ever</strong>. <strong>The higher I climb, the more I see</strong>, Enthralled, <em>Cultist Simulator</em></p>
-<p>The cover is the Milky Way, the title is Star. I also want to be that star twinkling in the vast sea of people, faint, but still glowing. Forever with tears in my eyes, forever believing that something beautiful is about to happen</p>
-<p>Back then it was literally tears of regret. That emotion has stayed with me to this day, the desire to hear better sound quality, to explore more of the music I love. That obsession has persisted, so getting into HIFI was no surprise at all</p>
-<hr>
-<h2 id="Charlotte"><a href="#Charlotte" class="headerlink" title="Charlotte"></a>Charlotte</h2><p> On a side note, this hobby of wanting to buy audio equipment might have come from <em>Charlotte</em>[^charlotte], the first anime that suddenly burst into my life</p>
-<p> Those endlessly long elementary school holidays, flipping through every category page on Tencent Video[^tencent-video] just to find something fun, and then you clicked on the first anime of your life</p>
-<p> Well, saying “first”isn’t quite right, before that, to kill time, I also watched Naruto. But it was those mind-numbingly boring first 300+ episodes, and then one day I had an epiphany and never watched it again. Even an elementary schooler could tell it was pure filler</p>
-<p> But <em>Charlotte</em> hit me hard. My first encounter with all those quirky, offbeat conversations, that everyday manzai[^manzai] comedy, people can live this interestingly!</p>
-<p> But back to the main topic. Thinking about it, it’s been ten years already. I’ve forgotten most of the specific plot details, but that ED, both the song and the illustration, I’ve always loved. The former is still one of my most-played tracks, and the latter has been my wallpaper for eleven years</p>
-<p> <img src="/en/img/Pasted-image-20260601222348.png" alt="Pasted-image-20260601222348"></p>
-<p> <img src="/en/img/3.png" alt="3"></p>
-<p>Pedestrians, starry sky, and thousands of household lights all flow past, hurriedly blurring.</p>
-<p>She sits alone on an isolated island, letting reality crumble around her, finishing one song.</p>
-<p>It was from here that I developed an obsession with portable playback devices. It becomes a barrier against the outside world, an anchor for one’s inner self.</p>
-<p>I love this subcultural melancholy, the aloofness of the clear-headed and the fullness of the heart.</p>
-<p>Believing in one’s own uniqueness, not begging for resonance, watching coldly with self-reflection, yet passionately living through every morning and dusk that belongs only to oneself.</p>
-<p>At least for me at 20 now, this image of Nao Tomori is my ideal as a marginal person.</p>
-<p>But looking back, it’s amazing that I’ve apparently liked this kind of character who seems capricious on the surface but is actually very reliable for ten years…</p>
-<p>Also, although it started because the Type-C port on my portable DAC&#x2F;amp iBasso DC04 Ultra got loose and needed repair, I also bought the KENWOOD MG-G708, the same model as Nao Tomori’s, for collection and commemoration.</p>
-<p>Honestly, it’s not just that. Loving to collect these old second-hand products is really interesting. You gather information everywhere to understand parameters and reviews, on domestic and foreign platforms, and this time I even went through many 2013 Japanese buyer reviews.</p>
-<p>And there’s a very empty, quiet state of mind here. Most electronic products are like this, performance parameters above all, people come and go without mercy. Precisely because this is an understandable human convention, it feels a bit lonely.</p>
-<p>Perhaps it’s because I’m going against the trend with a feeling of reminiscing about people through objects that I can understand it better. During those nights waiting for the repair, I put it by my bedside and listened, and I fell asleep quickly and slept well.</p>
-<p>Learning its story is even more sigh-inducing. This was KENWOOD’s last portable audio player. In the same month it was released, JVC essentially completed the operational merger of KENWOOD.</p>
-<blockquote>
-<p>The MG-G708, as the swan song of the KENWOOD brand’s independent operation, first introduced a Class-W capacitor-less digital headphone amplifier. This amplifier circuit generates a negative power supply internally, achieving dual-power-supply (± power) drive and completely eliminating the DC coupling capacitor at the output. This design thoroughly solved nonlinear distortion in the low-frequency range, significantly improving sound separation, vocal positioning, and low-frequency texture.</p>
-<p>On the software side, KENWOOD also brought down the “Supreme” sound-quality compensation technology previously praised on high-end models. It can dynamically predict and replenish high-frequency signals lost in lossy compressed audio like MP3 and AAC, making ordinary lossy music sound closer to CD quality.</p>
-<p>For the sake of sound quality without compromise, Bluetooth was completely cut. At the time, to eliminate electromagnetic interference from wireless radio frequency signals on the internal analog amplification circuit, the G708 decisively abandoned this increasingly popular feature. Doing subtraction, only to obtain purer sound.</p>
-<p>After the MG-G708, the newly merged JVC KENWOOD adjusted its strategic focus. With the rapid rise of smartphones, the traditional non-smart portable MP3 player market began to shrink sharply. JVC Kenwood decided not to continue updating KENWOOD-brand portable audio players; the Media Keg series was officially discontinued and ended.</p>
-<p>It can be said that the MG-G708’s development was completed during KENWOOD’s independent period, gathering the entire obsession and crystallization of effort of the team as an old audio manufacturer and pushing it to market. Such a machine full of sincerity, yet it collided with a cruel historical moment. This G708 without Bluetooth, focused on sound quality, became KENWOOD’s “Guangling San” in the Walkman field, a true swan song in the real sense.</p>
-</blockquote>
-<p>The back plate says “Made in 2011”, a bold pink-purple color scheme, and the cheap plastic even feels more nostalgic.</p>
-<hr>
-<p>[^4399]: 4399 is a Chinese web portal famous for its massive collection of Flash and H5 mini-games, think of it as a Chinese Roblox for the browser era. For kids growing up in 2010s China, it was <em>the</em> go-to gaming site.<br>[^jiahao]: “Jiahao” is a Chinese internet meme&#x2F;stereotype referring to a certain subculture of young men associated with flashy, try-hard aesthetics, somewhat analogous to “e-boy”or “chav”vibes in Western internet culture.<br>[^oppo]: OPPO is a major Chinese consumer electronics brand, primarily known for smartphones. In the 2010s, they marketed a “music phone”series with dedicated audio chips, unusual for the time, which gave surprisingly decent sound quality for a phone.<br>[^netease]: The link points to NetEase Cloud Music (, China’s most popular music streaming platform, often compared to Spotify, but with a much stronger social&#x2F;community features and a comment culture where users share personal stories under songs.<br>[^jaychou]: Jay Chou (ㄦ, and JJ Lin ( are two of the biggest Mandopop stars of the 2000s, 010s, as ubiquitous in Chinese-speaking world as Taylor Swift or Ed Sheeran are in the West.<br>[^charlotte]: <em>Charlotte</em> is a 2015 anime by P.A.Works, written by Jun Maeda. It follows students with special abilities, a blend of comedy, drama, and heartbreak that defined a generation of anime fans.<br>[^tencent-video]: Tencent Video is one of China’s largest streaming platforms, similar to Netflix or Hulu, but with a huge catalog of anime, dramas, and variety shows.<br>[^manzai]: <em>Manzai</em> is a traditional Japanese double-act comedy style, essentially the ancestor of <em>xiangsheng</em> (０) in Chinese culture, or somewhat akin to Abbott and Costello-style rapid-fire banter.</p>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-        <category>Music</category>
-      </categories>
-      <tags>
-        <tag>Music</tag>
-        <tag>HIFI</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>TLJH Lightweight JupyterHub Deployment Guide: One Server for Your Team&#39;s Data Analysis Environment</title>
     <url>/en/2026/05/06/TLJH-Lightweight-JupyterHub-Deployment-Guide/</url>
     <content><![CDATA[<h1 id="TLJH-Lightweight-JupyterHub-Deployment-Guide"><a href="#TLJH-Lightweight-JupyterHub-Deployment-Guide" class="headerlink" title="TLJH Lightweight JupyterHub Deployment Guide"></a>TLJH Lightweight JupyterHub Deployment Guide</h1><hr>
@@ -1779,6 +1666,144 @@
       </tags>
   </entry>
   <entry>
+    <title>Summer Outing With Friends</title>
+    <url>/en/2025/07/27/Team-Building-Dueling-Caravan/</url>
+    <content><![CDATA[<p>All my fellas</p>
+<img src="/img/qzone/2025-07-27_1.jpg" alt="" class="img-tall">
+
+<p><img src="/en/img/qzone/2025-07-27_2.jpg"></p>
+<p><img src="/en/img/qzone/2025-07-27_3.jpg"></p>
+<img src="/img/qzone/2025-07-27_4.jpg" alt="" class="img-tall">
+
+<p><img src="/en/img/qzone/2025-07-27_5.jpg"></p>
+<img src="/img/qzone/2025-07-27_6.jpg" alt="" class="img-tall">
+
+<img src="/img/qzone/2025-07-27_7.jpg" alt="" class="img-tall">
+
+<img src="/img/qzone/2025-07-27_8.jpg" alt="" class="img-tall">
+
+<p><img src="/en/img/qzone/2025-07-27_9.jpg"></p>
+<hr>
+<p>** Comments**</p>
+<ul>
+<li><strong>Chaldea Black Saber Master</strong> (2025-07-27 23:39): And the succubus yg</li>
+<li><strong>LoulanRE</strong> reply @Chaldea Black Saber Master (2025-07-27 23:53): In Chongqing that might be quite popular</li>
+<li><strong>Feng Juanlian Zhe Huaxiang</strong> reply @Chaldea Black Saber Master (2025-07-28 00:32): Sorry</li>
+<li><strong>Ji</strong> (2025-07-28 10:04): Passing away and all that</li>
+<li><strong>Luochan</strong> (2025-07-28 12:18): How’s the Ronin Black Egg</li>
+<li><strong>Wuxing</strong> reply @Luochan (2025-07-28 13:32): Ghost fire CS</li>
+<li><strong>Wuxing</strong> reply @Luochan (2025-07-28 13:33): Your head looks way too much like those ghost fire riders</li>
+<li><strong>Luochan</strong> reply @Wuxing (2025-10-08 20:05): Feels a lot like the cowherd boy</li>
+<li><strong>Wuxing</strong> reply @Luochan (2025-10-08 20:06): Carved from the same mold as my son</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+      </categories>
+      <tags>
+        <tag>Team Building</tag>
+        <tag>Social</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>The Story of Becoming a HIFI Enthusiast</title>
+    <url>/en/2026/06/01/The-Story-of-Becoming-a-HIFI-Enthusiast/</url>
+    <content><![CDATA[<p>The reason I wanted to write this is honestly just that a moment of regretful tears earlier this year sparked a passion for buying HIFI gear, and then my experiences visiting the Chengdu HIFI exhibition and the feelings after purchasing equipment</p>
+<p>But I feel like I have so many stories and connections with music, and it’s rare to pick up the pen and reminisce, so let me start from the beginning</p>
+<hr>
+<h2 id="How-It-All-Began"><a href="#How-It-All-Began" class="headerlink" title="How It All Began"></a>How It All Began</h2><p> The furthest back I can trace things is probably that I was lucky enough to pretty much have my own computer, you could say all the stories to come started from here</p>
+<p> In Guanyin Mountain in Xiamen, a place on the island super close to the sea, our family used to run a delivery shop there</p>
+<p> About one or two bus stops to the right was the beach. There was a daily sea breeze, though there were also quite a few office buildings nearby. When I was in early elementary school, I’d help out, I’ve driven a tricycle, gone into office buildings to deliver packages</p>
+<p> To the left was Software Park Phase III. When my dad drove me to school in the mornings, I’d often count the number of companies I saw along the way, and I was even proud enough to declare that because I was close to 4399[^4399] here, I could play the newest games</p>
+<p> I’ll add some photos when I go back to Xiamen in the summer</p>
+<p> But let me get back on topic. Because I had a computer, I’d often use it to listen to music, and consciously treated it as a form of entertainment. Even with those cheap accessory-level little speakers, I could still have a great time</p>
+<p> Something I still remember vividly is that even during lunch, I’d actively switch songs, wanting to show my dad my taste</p>
+<p> But when you’re a kid, it’s really hard to have your own style, you basically just listen to whatever’s popular. Jay Chou, JJ Lin[^jaychou], the EDM and traditional Chinese-style music that were hot at the time</p>
+<p> Every post-00s kid has that memory, right, That era when the internet was dominated by Alan Walker, now it’s become a symbol of “Jiahao”[^jiahao] vibes. Sigh, time… oh, the innocence of the early internet days</p>
+<p> But back then I never really had a specific preference, maybe just a fondness for certain songs. It was picking the tallest among the short, hardly something you’d call being moved. To say something a bit controversial, I even feel like phonk is a continuation of the Jiahao lineage. Anyway, I just can’t get into that style</p>
+<hr>
+<h2 id="The-First-Tears-of-Regret"><a href="#The-First-Tears-of-Regret" class="headerlink" title="The First Tears of Regret"></a>The First Tears of Regret</h2><p>The earliest tears of regret I can still remember now were from listening on our family’s OPPO phone</p>
+<p>It must’ve been late elementary school. I only found out recently that OPPO actually had a music phone lineup, their DAC and amp chips aren’t bad even by today’s standards[^oppo]</p>
+<p>I keep using my school year as a time marker, if you want to know roughly when, I was born in 2006</p>
+<p>The device was the EarPods-style earbuds that came bundled with the phone</p>
+<p>They looked something like the picture below. Back then it seemed really popular to include this kind of accessory</p>
+<p><img src="/en/img/Pasted-image-20260520232106.png" alt="Pasted-image-20260520232106"></p>
+<p>The song was <strong>Star</strong> - [Eric Chen](<a href="https://music.163.com/artist">https://music.163.com/artist</a>, id&#x3D;12605661)[^netease]</p>
+<ul>
+<li></li>
+</ul>
+<p>Ever since I got into HIFI, I’ve kept hearing about the concept of <strong>psychoacoustics</strong>. Even with better gear now, it’s hard to recapture that flow state from the first time I heard it</p>
+<p>But I can still remember, and I can still feel it now</p>
+<p>A pure and expansive backdrop, faint yet resolute, crisply striking at the heartstrings. The music as a whole brings a greater overview effect</p>
+<p>Light leaks in through <strong>the cracks</strong>. My mind is <strong>clearer than ever</strong>. <strong>The higher I climb, the more I see</strong>, Enthralled, <em>Cultist Simulator</em></p>
+<p>The cover is the Milky Way, the title is Star. I also want to be that star twinkling in the vast sea of people, faint, but still glowing. Forever with tears in my eyes, forever believing that something beautiful is about to happen</p>
+<p>Back then it was literally tears of regret. That emotion has stayed with me to this day, the desire to hear better sound quality, to explore more of the music I love. That obsession has persisted, so getting into HIFI was no surprise at all</p>
+<hr>
+<h2 id="Charlotte"><a href="#Charlotte" class="headerlink" title="Charlotte"></a>Charlotte</h2><p> On a side note, this hobby of wanting to buy audio equipment might have come from <em>Charlotte</em>[^charlotte], the first anime that suddenly burst into my life</p>
+<p> Those endlessly long elementary school holidays, flipping through every category page on Tencent Video[^tencent-video] just to find something fun, and then you clicked on the first anime of your life</p>
+<p> Well, saying “first”isn’t quite right, before that, to kill time, I also watched Naruto. But it was those mind-numbingly boring first 300+ episodes, and then one day I had an epiphany and never watched it again. Even an elementary schooler could tell it was pure filler</p>
+<p> But <em>Charlotte</em> hit me hard. My first encounter with all those quirky, offbeat conversations, that everyday manzai[^manzai] comedy, people can live this interestingly!</p>
+<p> But back to the main topic. Thinking about it, it’s been ten years already. I’ve forgotten most of the specific plot details, but that ED, both the song and the illustration, I’ve always loved. The former is still one of my most-played tracks, and the latter has been my wallpaper for eleven years</p>
+<p> <img src="/en/img/Pasted-image-20260601222348.png" alt="Pasted-image-20260601222348"></p>
+<p> <img src="/en/img/3.png" alt="3"></p>
+<p>Pedestrians, starry sky, and thousands of household lights all flow past, hurriedly blurring.</p>
+<p>She sits alone on an isolated island, letting reality crumble around her, finishing one song.</p>
+<p>It was from here that I developed an obsession with portable playback devices. It becomes a barrier against the outside world, an anchor for one’s inner self.</p>
+<p>I love this subcultural melancholy, the aloofness of the clear-headed and the fullness of the heart.</p>
+<p>Believing in one’s own uniqueness, not begging for resonance, watching coldly with self-reflection, yet passionately living through every morning and dusk that belongs only to oneself.</p>
+<p>At least for me at 20 now, this image of Nao Tomori is my ideal as a marginal person.</p>
+<p>But looking back, it’s amazing that I’ve apparently liked this kind of character who seems capricious on the surface but is actually very reliable for ten years…</p>
+<p>Also, although it started because the Type-C port on my portable DAC&#x2F;amp iBasso DC04 Ultra got loose and needed repair, I also bought the KENWOOD MG-G708, the same model as Nao Tomori’s, for collection and commemoration.</p>
+<p>Honestly, it’s not just that. Loving to collect these old second-hand products is really interesting. You gather information everywhere to understand parameters and reviews, on domestic and foreign platforms, and this time I even went through many 2013 Japanese buyer reviews.</p>
+<p>And there’s a very empty, quiet state of mind here. Most electronic products are like this, performance parameters above all, people come and go without mercy. Precisely because this is an understandable human convention, it feels a bit lonely.</p>
+<p>Perhaps it’s because I’m going against the trend with a feeling of reminiscing about people through objects that I can understand it better. During those nights waiting for the repair, I put it by my bedside and listened, and I fell asleep quickly and slept well.</p>
+<p>Learning its story is even more sigh-inducing. This was KENWOOD’s last portable audio player. In the same month it was released, JVC essentially completed the operational merger of KENWOOD.</p>
+<blockquote>
+<p>The MG-G708, as the swan song of the KENWOOD brand’s independent operation, first introduced a Class-W capacitor-less digital headphone amplifier. This amplifier circuit generates a negative power supply internally, achieving dual-power-supply (± power) drive and completely eliminating the DC coupling capacitor at the output. This design thoroughly solved nonlinear distortion in the low-frequency range, significantly improving sound separation, vocal positioning, and low-frequency texture.</p>
+<p>On the software side, KENWOOD also brought down the “Supreme” sound-quality compensation technology previously praised on high-end models. It can dynamically predict and replenish high-frequency signals lost in lossy compressed audio like MP3 and AAC, making ordinary lossy music sound closer to CD quality.</p>
+<p>For the sake of sound quality without compromise, Bluetooth was completely cut. At the time, to eliminate electromagnetic interference from wireless radio frequency signals on the internal analog amplification circuit, the G708 decisively abandoned this increasingly popular feature. Doing subtraction, only to obtain purer sound.</p>
+<p>After the MG-G708, the newly merged JVC KENWOOD adjusted its strategic focus. With the rapid rise of smartphones, the traditional non-smart portable MP3 player market began to shrink sharply. JVC Kenwood decided not to continue updating KENWOOD-brand portable audio players; the Media Keg series was officially discontinued and ended.</p>
+<p>It can be said that the MG-G708’s development was completed during KENWOOD’s independent period, gathering the entire obsession and crystallization of effort of the team as an old audio manufacturer and pushing it to market. Such a machine full of sincerity, yet it collided with a cruel historical moment. This G708 without Bluetooth, focused on sound quality, became KENWOOD’s “Guangling San” in the Walkman field, a true swan song in the real sense.</p>
+</blockquote>
+<p>The back plate says “Made in 2011”, a bold pink-purple color scheme, and the cheap plastic even feels more nostalgic.</p>
+<hr>
+<p>[^4399]: 4399 is a Chinese web portal famous for its massive collection of Flash and H5 mini-games, think of it as a Chinese Roblox for the browser era. For kids growing up in 2010s China, it was <em>the</em> go-to gaming site.<br>[^jiahao]: “Jiahao” is a Chinese internet meme&#x2F;stereotype referring to a certain subculture of young men associated with flashy, try-hard aesthetics, somewhat analogous to “e-boy”or “chav”vibes in Western internet culture.<br>[^oppo]: OPPO is a major Chinese consumer electronics brand, primarily known for smartphones. In the 2010s, they marketed a “music phone”series with dedicated audio chips, unusual for the time, which gave surprisingly decent sound quality for a phone.<br>[^netease]: The link points to NetEase Cloud Music (, China’s most popular music streaming platform, often compared to Spotify, but with a much stronger social&#x2F;community features and a comment culture where users share personal stories under songs.<br>[^jaychou]: Jay Chou (ㄦ, and JJ Lin ( are two of the biggest Mandopop stars of the 2000s, 010s, as ubiquitous in Chinese-speaking world as Taylor Swift or Ed Sheeran are in the West.<br>[^charlotte]: <em>Charlotte</em> is a 2015 anime by P.A.Works, written by Jun Maeda. It follows students with special abilities, a blend of comedy, drama, and heartbreak that defined a generation of anime fans.<br>[^tencent-video]: Tencent Video is one of China’s largest streaming platforms, similar to Netflix or Hulu, but with a huge catalog of anime, dramas, and variety shows.<br>[^manzai]: <em>Manzai</em> is a traditional Japanese double-act comedy style, essentially the ancestor of <em>xiangsheng</em> (０) in Chinese culture, or somewhat akin to Abbott and Costello-style rapid-fire banter.</p>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+        <category>Music</category>
+      </categories>
+      <tags>
+        <tag>Music</tag>
+        <tag>HIFI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Making Tokai Teio Achieve the Triple Crown in Uma Musume That She Couldnt in Reality</title>
+    <url>/en/2022/07/10/Undefeated-Emperor-and-Miraculous-Revival/</url>
+    <content><![CDATA[<p>The undefeated genius has thus passed, the unyielding emperor is thus born<br>Tokai Teio[^1], a miraculous revival!</p>
+<img src="/img/qzone/2022-07-10_1.jpg" alt="" class="img-very-tall">
+
+<img src="/img/qzone/2022-07-10_2.jpg" alt="" class="img-very-tall">
+
+<p><img src="/en/img/qzone/2022-07-10_3.jpg"></p>
+<p><img src="/en/img/qzone/2022-07-10_4.png"></p>
+<hr>
+<p><strong>💬 Comments</strong></p>
+<ul>
+<li><strong>Zhuifeng Shaonian</strong> (2022-07-10 18:08): Holy shit, Uma Musume[^2]</li>
+</ul>
+<p>[^1]: Tokai Teio (トウカイテイオー) — a legendary Japanese racehorse who won the Japanese Triple Crown in 1991 but suffered multiple career-threatening injuries, yet miraculously returned to win the Takarazuka Kinen in 1993. In Uma Musume: Pretty Derby, she is personified as a cheerful, determined horse girl.<br>[^2]: Uma Musume: Pretty Derby — a Japanese multimedia franchise by Cygames where famous racehorses are reimagined as anthropomorphic “horse girls” who compete in races and idol performances.</p>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+      </categories>
+      <tags>
+        <tag>Anime</tag>
+        <tag>Uma Musume</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Uma Musume and 21st Century English</title>
     <url>/en/2023/04/16/Uma-Musume-and-21st-Century-English/</url>
     <content><![CDATA[<p>Saw on Bilibili[^1] that the 21st Century English Newspaper[^2] featured Uma Musume<br>What an extraordinary encounter this is!<br>I rushed to the reading room to find it right away<br>By the time I got there, they’d already swapped to a new issue<br>I felt really bad interrupting the reading room auntie’s lunch to help me search through back issues<br>The moment I mentioned that particular newspaper might hold some sentimental value for me, she immediately and cheerfully agreed<br>The art of cooperation is simply having good manners!<br>But after searching high and low, we couldn’t find it<br>The auntie suddenly recalled that another young girl had also come looking for that same issue, and since all the other papers were still there, someone must have taken it<br>Uma fans[^3] are really something — I just wanted to take a photo as a memento<br>The auntie kept apologizing, then suddenly noticed the phone in my pocket and suggested I scan the QR code from another issue<br>I quickly nodded and said sure, I’ll scan it when I get back this weekend<br>Though I bought the digital version after going back, it just wasn’t the real thing anymore</p>
@@ -1817,67 +1842,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Wild Coop - A Spontaneous Poem Felt From the Audience</title>
-    <url>/en/2025/03/23/Wild-Coop-Revolutionaries-of-Life/</url>
-    <content><![CDATA[<p>Wild Coop[^1]<br>Someone had already let out a cry through their instruments<br>A cry — I need only follow, straight to the soul<br>The soul, briefly breaking free from its shackles — let me free, even if just for tonight<br>Tonight — about the era, about choices, about life — they are revolutionaries of living, and I get a share too, their free, brave, passionate hearts<br>From the heart, a thought suddenly surfaced — I want to distribute gratitude everywhere, and then begin a new life<br><img src="/img/qzone/2025-03-23_p2_1.jpg" alt="" class="img-enlarge"><br><img src="/img/qzone/2025-03-23_p2_2.jpg" alt="" class="img-enlarge"><br><img src="/img/qzone/2025-03-23_p2_3.jpg" alt="" class="img-enlarge"></p>
-<p>[^1]: Wild Coop (野外合作社, Yěwài Hézuòshè) — a Chinese indie rock band known for their raw, emotionally charged live performances. The name literally translates to “Wilderness Cooperative,” reflecting their grassroots, collaborative spirit.</p>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-      </categories>
-      <tags>
-        <tag>Music</tag>
-        <tag>Live</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Making Tokai Teio Achieve the Triple Crown in Uma Musume That She Couldnt in Reality</title>
-    <url>/en/2022/07/10/Undefeated-Emperor-and-Miraculous-Revival/</url>
-    <content><![CDATA[<p>The undefeated genius has thus passed, the unyielding emperor is thus born<br>Tokai Teio[^1], a miraculous revival!</p>
-<img src="/img/qzone/2022-07-10_1.jpg" alt="" class="img-very-tall">
-
-<img src="/img/qzone/2022-07-10_2.jpg" alt="" class="img-very-tall">
-
-<p><img src="/en/img/qzone/2022-07-10_3.jpg"></p>
-<p><img src="/en/img/qzone/2022-07-10_4.png"></p>
-<hr>
-<p><strong>💬 Comments</strong></p>
-<ul>
-<li><strong>Zhuifeng Shaonian</strong> (2022-07-10 18:08): Holy shit, Uma Musume[^2]</li>
-</ul>
-<p>[^1]: Tokai Teio (トウカイテイオー) — a legendary Japanese racehorse who won the Japanese Triple Crown in 1991 but suffered multiple career-threatening injuries, yet miraculously returned to win the Takarazuka Kinen in 1993. In Uma Musume: Pretty Derby, she is personified as a cheerful, determined horse girl.<br>[^2]: Uma Musume: Pretty Derby — a Japanese multimedia franchise by Cygames where famous racehorses are reimagined as anthropomorphic “horse girls” who compete in races and idol performances.</p>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-      </categories>
-      <tags>
-        <tag>Anime</tag>
-        <tag>Uma Musume</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Victoria 3 Beta Leak</title>
-    <url>/en/2022/04/17/Victoria-3-Beta-Leak/</url>
-    <content><![CDATA[<p>All week at school I kept thinking about Victoria 3, and then I come home to find a development Beta has leaked (Paradox, do you dare outsource again?)</p>
-<p>Crashes &#x2F; English-only &#x2F; bugs &#x2F; variable names — I pushed through for a few hours but the experience was honestly miserable. Even though a lot of the big promises from the dev diaries did make it in, I’ll just wait for Queen Victoria’s birthday in May to meet again.</p>
-<p><em>(Victoria 3 Beta clinks — the soul of the Crassus Donkey ascends to heaven)</em></p>
-<p>Kings and Queens will go to war,<br>and nations will take the sword,<br>to rule the world and heed the call<br>for power and glory</p>
-<p><img src="/en/img/qzone/2022-04-17_1.jpg"></p>
-<p><img src="/en/img/qzone/2022-04-17_2.jpg"></p>
-<p><img src="/en/img/qzone/2022-04-17_3.jpg"></p>
-<p><img src="/en/img/qzone/2022-04-17_4.jpg"></p>
-<p><img src="/en/img/qzone/2022-04-17_5.jpg"></p>
-<p><img src="/en/img/qzone/2022-04-17_6.jpg"></p>
-<p><img src="/en/img/qzone/2022-04-17_7.jpg"></p>
-]]></content>
-      <categories>
-        <category>Life Essays</category>
-      </categories>
-      <tags>
-        <tag>Life Essays</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Why Is This AI So Evil</title>
     <url>/en/2026/04/29/Why-Is-This-AI-So-Evil/</url>
     <content><![CDATA[<p>awc why is this AI so evil</p>
@@ -1898,6 +1862,20 @@
       <tags>
         <tag>AI</tag>
         <tag>Rant</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Wild Coop - A Spontaneous Poem Felt From the Audience</title>
+    <url>/en/2025/03/23/Wild-Coop-Revolutionaries-of-Life/</url>
+    <content><![CDATA[<p>Wild Coop[^1]<br>Someone had already let out a cry through their instruments<br>A cry — I need only follow, straight to the soul<br>The soul, briefly breaking free from its shackles — let me free, even if just for tonight<br>Tonight — about the era, about choices, about life — they are revolutionaries of living, and I get a share too, their free, brave, passionate hearts<br>From the heart, a thought suddenly surfaced — I want to distribute gratitude everywhere, and then begin a new life<br><img src="/img/qzone/2025-03-23_p2_1.jpg" alt="" class="img-enlarge"><br><img src="/img/qzone/2025-03-23_p2_2.jpg" alt="" class="img-enlarge"><br><img src="/img/qzone/2025-03-23_p2_3.jpg" alt="" class="img-enlarge"></p>
+<p>[^1]: Wild Coop (野外合作社, Yěwài Hézuòshè) — a Chinese indie rock band known for their raw, emotionally charged live performances. The name literally translates to “Wilderness Cooperative,” reflecting their grassroots, collaborative spirit.</p>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+      </categories>
+      <tags>
+        <tag>Music</tag>
+        <tag>Live</tag>
       </tags>
   </entry>
   <entry>
@@ -1922,6 +1900,28 @@
         <tag>Music</tag>
         <tag>Live</tag>
         <tag>shanghaiqiutian</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Victoria 3 Beta Leak</title>
+    <url>/en/2022/04/17/Victoria-3-Beta-Leak/</url>
+    <content><![CDATA[<p>All week at school I kept thinking about Victoria 3, and then I come home to find a development Beta has leaked (Paradox, do you dare outsource again?)</p>
+<p>Crashes &#x2F; English-only &#x2F; bugs &#x2F; variable names — I pushed through for a few hours but the experience was honestly miserable. Even though a lot of the big promises from the dev diaries did make it in, I’ll just wait for Queen Victoria’s birthday in May to meet again.</p>
+<p><em>(Victoria 3 Beta clinks — the soul of the Crassus Donkey ascends to heaven)</em></p>
+<p>Kings and Queens will go to war,<br>and nations will take the sword,<br>to rule the world and heed the call<br>for power and glory</p>
+<p><img src="/en/img/qzone/2022-04-17_1.jpg"></p>
+<p><img src="/en/img/qzone/2022-04-17_2.jpg"></p>
+<p><img src="/en/img/qzone/2022-04-17_3.jpg"></p>
+<p><img src="/en/img/qzone/2022-04-17_4.jpg"></p>
+<p><img src="/en/img/qzone/2022-04-17_5.jpg"></p>
+<p><img src="/en/img/qzone/2022-04-17_6.jpg"></p>
+<p><img src="/en/img/qzone/2022-04-17_7.jpg"></p>
+]]></content>
+      <categories>
+        <category>Life Essays</category>
+      </categories>
+      <tags>
+        <tag>Life Essays</tag>
       </tags>
   </entry>
   <entry>
