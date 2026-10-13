@@ -1,5 +1,5 @@
----
-title: Mermaid 数据可视化演示
+﻿---
+title: Mermaid数据可视化演示
 date: 2026-05-04 16:00:00
 tags: ["工具", "教程"]
 categories: ["技术教程", "工具使用"]

@@ -5,3 +5,4 @@ public-en/
 .DS_Store
 db.json
 _convert2.py
+.deploy_git/

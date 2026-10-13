@@ -1,5 +1,5 @@
----
-title: TLJH 轻量级 JupyterHub 部署指南：一台服务器搞定团队数据分析环境
+﻿---
+title: TLJH-轻量级-JupyterHub-部署指南
 date: 2026-05-06 06:00:00
 tags: ["DevOps", "教程", "数据科学"]
 categories: ["技术教程", "DevOps"]

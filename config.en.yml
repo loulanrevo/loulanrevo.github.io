@@ -7,7 +7,7 @@ author: LouLanRE
 language: en
 timezone: 'Asia/Shanghai'
 
-url: https://loulanrevo.github.io/en
+url: https://blog.loulanre.asia/en
 root: /en/
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -23,6 +23,7 @@ category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
+  - 2026/06/02/ipo_presentation.html
 
 new_post_name: :title.md
 default_layout: post
@@ -60,3 +61,4 @@ deploy:
 
 ignore:
   - source-zh/
+  - source-ja/

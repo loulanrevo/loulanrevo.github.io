@@ -10,6 +10,7 @@ categories:
   - SubCategory
 lang: en
 description: "English description for SEO"
+published: false
 ---
 
 Your English content here.

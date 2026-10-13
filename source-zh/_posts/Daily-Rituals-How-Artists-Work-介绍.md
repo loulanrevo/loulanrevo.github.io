@@ -1,5 +1,5 @@
 ---
-title: Daily Rituals How Artists Work 介绍
+title: Daily-Rituals-How-Artists-Work-介绍
 date: 2025-02-13 00:00:00
 tags:
   - 翻译
@@ -9,7 +9,7 @@ categories:
   - Daily-Rituals
 ---
 
-![](https://picx.zhimg.com/v2-805fd09b1d543ada74014be005abae33_1440w.jpg)
+![](/img/daily-rituals-cover.jpg)
 
 Daily Rituals How Artists Work (Mason Currey)
 
@@ -17,13 +17,13 @@ Daily Rituals How Artists Work (Mason Currey)
 
 我是在 [Jarrett Ye](https://www.zhihu.com/people/JarrettYe) 翻译的文章 [在研究中培养深度和沉静 - 知乎](https://zhuanlan.zhihu.com/p/677677092) 中继续做扩展阅读中读到的这本书
 
-![](https://pic2.zhimg.com/v2-fdd9926f3d69d6246a1452370465f7d3_1440w.jpg)
+![](/img/daily-rituals-expectation.jpg)
 
 错误的期望指的是，认为工作的进展理应是迅速，时时有收获的，认为自己状态不佳而陷入恐惧和自我怀疑
 
 ## **本书内容**
 
-![](https://pic2.zhimg.com/v2-bb24a4898e57faeac53d5f8f00ce660b_1440w.jpg)
+![](/img/daily-rituals-content.jpg)
 
 题记："谁能揭示艺术家气质的本质与印记？谁能理解那深邃且本能的结合——在纪律与放纵之间取得的平衡！"——托马斯·曼，《威尼斯之死》
 
@@ -59,7 +59,7 @@ Daily Rituals How Artists Work (Mason Currey)
 > ***In reality, most of the people in this book are somewhere in the middle—committed to daily work but never entirely confident of their progress; always wary of the one-off day that undoes the streak.***
 > *实际上，这本书中大多数人都处于中间状态——他们坚持日常工作，但从未完全确信自己的进展；总是提防偶尔的一天会打破他们的连贯节奏。*
 
-![](https://picx.zhimg.com/v2-a35ae6b81097f1d050a4f160a523f611_1440w.jpg)
+![](/img/daily-rituals-diary.jpg)
 
 下决心重新安排规划学习时间的时候，从我的obisidian日记库整理出来的，十二月已经到了中旬一篇日记都没记，每日都是日寄
 

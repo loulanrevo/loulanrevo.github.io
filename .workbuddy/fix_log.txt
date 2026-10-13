@@ -1,0 +1,15 @@
+=== Uma-Musume-and-21st-Century-English.md === (2 diff lines)
+  -[^1]: Bilibili (b站) — a major Chinese video-sharing platform, often compared to YouTube but with a strong anime, gaming, and ACG (Anime, Comic, Games) subculture community.
+  +[^1]: Bilibili (bվ) — a major Chinese video-sharing platform, often compared to YouTube but with a strong anime, gaming, and ACG (Anime, Comic, Games) subculture community.
+
+=== What-Can-Love-Still-Do.md === (6 diff lines)
+  -鎰涖伀銇с亶銈嬨亾銇ㄣ伅銇俱仩銇傘倠銇嬨亜[^1]
+  +愛にできることはまだあるかい[^1]
+  -[^1]: "Ai ni dekiru koto wa mada aru kai" 鈥?"Is there still something love can do?" 鈥?a song by RADWIMPS composed for Makoto Shinkai's film *Weathering with You* (澶╂皸銇瓙, 2019).
+  -[^2]: TNO 鈥?*The New Order: Last Days of Europe*, a renowned alternate-history mod for *Hearts of Iron IV* depicting a world where the Axis powers won World War II. Known for its deeply narrative-driven and often harrowing portrayal of totalitarianism, war, and the human spirit.
+  +[^1]: "Ai ni dekiru koto wa mada aru kai" —"Is there still something love can do?" —a song by RADWIMPS composed for Makoto Shinkai's film *Weathering with You* (天気の子, 2019).
+  +[^2]: TNO —*The New Order: Last Days of Europe*, a renowned alternate-history mod for *Hearts of Iron IV* depicting a world where the Axis powers won World War II. Known for its deeply narrative-driven and often harrowing portrayal of totalitarianism, war, and the human spirit.
+
+=== shanghaiqiutian-Miracle-Workers.md === (2 diff lines)
+  -[^bilibili]: **Bilibili** (B站) is China's leading video platform for anime, gaming, and creative content — often compared to a hybrid of YouTube and NicoNico, famous for its bullet comments (弹幕) that scroll across videos.
+  +[^bilibili]: **Bilibili** (Bվ) is China's leading video platform for anime, gaming, and creative content — often compared to a hybrid of YouTube and NicoNico, famous for its bullet comments (弹幕) that scroll across videos.

@@ -1,5 +1,5 @@
----
-title: 在 JupyterHub Terminal 里用 OpenCode 做 AI 并行开发
+﻿---
+title: 在JupyterHub-Terminal-里用-OpenCode-做-AI-并行开发
 date: 2026-05-09 04:00:00
 tags: ["DevOps", "工具", "教程"]
 categories: ["技术教程", "DevOps"]
