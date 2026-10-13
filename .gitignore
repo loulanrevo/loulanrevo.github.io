@@ -1,6 +1,6 @@
 node_modules/
 public/
-public-en/
+public-*/
 *.log
 .DS_Store
 db.json

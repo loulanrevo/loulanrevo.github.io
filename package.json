@@ -6,12 +6,15 @@
     "version": "8.1.2"
   },
   "scripts": {
+    "postinstall": "node tools/patch-multilang.js",
     "build": "hexo multiple-language-generate",
     "build:zh": "hexo generate",
     "server": "hexo multiple-language-generate && hexo server",
     "server:zh": "hexo server",
     "clean": "hexo clean",
-    "deploy": "hexo multiple-language-generate && hexo deploy"
+    "deploy": "hexo multiple-language-generate && hexo deploy",
+    "sync": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/sync-blog.ps1",
+    "sync:deploy": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/sync-and-deploy.ps1"
   },
   "dependencies": {
     "hexo": "^8.1.2",
